@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
+  <test thread-count="5" name="Default test(failed)">
+    <classes>
+      <class name="com.testrunner.ss.TestRunner">
+        <methods>
+          <include name="beforeTest"/>
+          <include name="setUp"/>
+          <include name="setUpClass"/>
+          <include name="tearDown"/>
+          <include name="feature" invocation-numbers="0"/>
+          <include name="takeScreenshot"/>
+          <include name="tearDownClass"/>
+        </methods>
+      </class> <!-- com.testrunner.ss.TestRunner -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->
