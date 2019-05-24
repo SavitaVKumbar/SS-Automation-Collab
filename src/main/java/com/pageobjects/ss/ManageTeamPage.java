@@ -35,4 +35,13 @@ public class ManageTeamPage {
 	@FindBy(xpath = "//table[@class='v-um-tbl ms-tbl-margin']/tbody/tr[2]/td[9]/div[2]/div[text() = 'Login']")
 	public WebElement agentLoginAs;
 	
+	@FindBy(xpath = "//div[@class='ms-page-user-count']/div[3]")
+	public WebElement totalCountOfUsers;
+	
+	@FindBy(xpath = "//div[@class='ms-filters-dropdown-hdr']")
+	public WebElement selectedFilterDropDown;
+	
+	@FindBy(xpath = "//div[@class='ms-filter ms-sel-verified']")
+	public WebElement selectVerifiedUsers;
+	
 }

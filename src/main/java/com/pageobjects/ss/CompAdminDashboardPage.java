@@ -115,6 +115,12 @@ public class CompAdminDashboardPage extends BaseClass{
 	@FindBy(xpath = "//div[@id='hdr-dashboard-dropdown']")
 	public WebElement headerDashboardDropDown;
 	
+	@FindBy(xpath = "//div[@id='dashboard-sel']")
+	public WebElement dashboardSelectionDropDown;
+	
+	@FindBy(xpath = "//div[@class='da-dd-item']")
+	public List<WebElement> dashboardSelectionDropDownItems;
+	
 	@FindBy(xpath = "//div[@id='hdr-link-item-dropdown-dash']")
 	public WebElement headerDashboardDropDownList;
 	
@@ -150,5 +156,38 @@ public class CompAdminDashboardPage extends BaseClass{
 	
 	@FindBy(xpath = "//div[@id='time-frame-options']/div")
 	public List<WebElement> allTimeDropDownOptions;
+	
+	@FindBy(xpath = "//span[@id='incomplete-lbl-span-sel']")
+	public WebElement incompleteSurveyCount;
+	
+	@FindBy(xpath = "//span[@id='completed-lbl-span']")
+	public WebElement completedCount;
+	
+	@FindBy(xpath = "//span[@id='unprocessed-lbl-span']")
+	public WebElement unprocessedCount;
+	
+	@FindBy(xpath = "//span[@id='unassigned-lbl-span-sel']")
+	public WebElement unassignedCount;
+	
+	@FindBy(xpath = "//span[@id='duplicate-lbl-span']")
+	public WebElement duplicateCount;
+	
+	@FindBy(xpath = "//span[@id='corrupted-lbl-span']")
+	public WebElement corruptedCount;
+	
+	@FindBy(xpath = "//span[@id='other-lbl-span']")
+	public WebElement otherCount;
+	
+	@FindBy(xpath = "//span[@id='unsubscribed-lbl-span']")
+	public WebElement unsubscribedCount;
+	
+	@FindBy(xpath = "//span[@id='social-posts-lbl-span']")
+	public WebElement socialPostsCount;
+	
+	@FindBy(xpath = "//span[@id='zillow-lbl-span']")
+	public WebElement zillowReviewsCount;
+	
+	@FindBy(xpath = "//span[@id='third-party-lbl-span']")
+	public WebElement thirdPartyCount;
 	
 }

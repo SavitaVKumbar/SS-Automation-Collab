@@ -53,6 +53,7 @@ import com.pageobjects.ss.EditSurveyPage;
 import com.pageobjects.ss.GetStartedEmailPage;
 import com.pageobjects.ss.GmailPage;
 import com.pageobjects.ss.JavaScriptWidgetPage;
+import com.pageobjects.ss.LOSearchPage;
 import com.pageobjects.ss.LinkedInPage;
 import com.pageobjects.ss.LoginPage;
 import com.pageobjects.ss.LogoutPage;
@@ -125,17 +126,21 @@ public class CreateCompany extends BaseClass {
 	LinkedInPage linkedInPageObject = new LinkedInPage(driver);
 	TwitterPage twitterPageObject = new TwitterPage(driver);
 	CompSocialMonitorPage compSocialMonitorPageObject = new CompSocialMonitorPage(driver);
+	LOSearchPage LOSearchPageObject = new LOSearchPage(driver);
 	String firstName, customerEmail, companyName, userForRegion, userForCompany, scriptStartTime, agentName, mediaType,
 			reviewText, dirPath, surveyResultsFileName;
 	int runInstance, reviewAtIndex, numberOfRows;
 	Date startDateFinal, endDateFinal;
 	List<String> surveySources;
-	String buttonOneOpacityToEnter, buttonTwoOpacityToEnter, reviewLoaderOpacityToEnter, initialReviewCountToEnter,  onLoadReviewCountToEnter, onLoadButtonSizeToEnter , buttonOneLinkToEnter , buttonTwoLinkToEnter ,
-	  socialSurveyFilterToEnter ,  socialSurveyVerifiedFilterToEnter , zillowFilterToEnter , hideBarGraphValueToEnter, hideOptionsValueToEnter, hideContactBtnValueToEnter,
-	  hideWriteReviewButtonValueToEnter, allowModestRatingValueToEnter;
-	String buttonOneOpacity, buttonTwoOpacity,reviewLoaderOpacity, initialReviewCount,  onLoadReviewCount, onLoadButtonSize , buttonOneLink , buttonTwoLink ,
-	  socialSurveyFilter ,  socialSurveyVerifiedFilter , zillowFilter , hideBarGraphValue, hideOptionsValue, hideContactBtnValue,
-	  hideWriteReviewButtonValue, allowModestRatingValue;
+	String buttonOneOpacityToEnter, buttonTwoOpacityToEnter, reviewLoaderOpacityToEnter, initialReviewCountToEnter,
+			onLoadReviewCountToEnter, onLoadButtonSizeToEnter, buttonOneLinkToEnter, buttonTwoLinkToEnter,
+			socialSurveyFilterToEnter, socialSurveyVerifiedFilterToEnter, zillowFilterToEnter, hideBarGraphValueToEnter,
+			hideOptionsValueToEnter, hideContactBtnValueToEnter, hideWriteReviewButtonValueToEnter,
+			allowModestRatingValueToEnter;
+	String buttonOneOpacity, buttonTwoOpacity, reviewLoaderOpacity, initialReviewCount, onLoadReviewCount,
+			onLoadButtonSize, buttonOneLink, buttonTwoLink, socialSurveyFilter, socialSurveyVerifiedFilter,
+			zillowFilter, hideBarGraphValue, hideOptionsValue, hideContactBtnValue, hideWriteReviewButtonValue,
+			allowModestRatingValue;
 	SoftAssert softAssert = new SoftAssert();
 	String reviewTextToEnterFinal;
 
@@ -1348,19 +1353,19 @@ public class CreateCompany extends BaseClass {
 		}
 
 		for (int i = 0; i < list.size(); i++) {
-			System.out.println("First:"+list.get(i));
-			reviewTextToEnter = reviewTextToEnter + list.get(i) +"\\n";
+			System.out.println("First:" + list.get(i));
+			reviewTextToEnter = reviewTextToEnter + list.get(i) + "\\n";
 		}
 		System.out.println(reviewTextToEnter);
-		reviewTextToEnterFinal = reviewTextToEnter.substring(0, reviewTextToEnter.length()-2);
+		reviewTextToEnterFinal = reviewTextToEnter.substring(0, reviewTextToEnter.length() - 2);
 
 		Thread.sleep(4000);
 		compSocialMonitorPageObject.searchTextBox.clear();
 		compSocialMonitorPageObject.searchTextBox.sendKeys(reviewTextToEnterFinal);
 		compSocialMonitorPageObject.searchTextBox.sendKeys(Keys.ENTER);
 		Thread.sleep(4000);
-		
-				reviewAtIndex = CommonFunctions.fn_SearchReview(compSocialMonitorPageObject, agentName, mediaType, reviewText);
+
+		reviewAtIndex = CommonFunctions.fn_SearchReview(compSocialMonitorPageObject, agentName, mediaType, reviewText);
 		System.out.println(reviewAtIndex);
 		if (reviewAtIndex != -1) {
 			System.out.println("Review is present ");
@@ -1549,65 +1554,71 @@ public class CreateCompany extends BaseClass {
 		} else {
 			System.out.println("Review is not present");
 		}
-		
+
 		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
 	}
-	
+
 	@And("^Emails should be received and user should be able to reply$")
-    public void emails_should_be_received_and_user_should_be_able_to_reply() throws Throwable {
-		
+	public void emails_should_be_received_and_user_should_be_able_to_reply() throws Throwable {
+
 		// Script starting time
-		//scriptStartTime = CommonFunctions.fn_getCurrentDateTime();
-				
+		// scriptStartTime = CommonFunctions.fn_getCurrentDateTime();
+
 		// Login to Email account
 		CommonFunctions.fn_OpenURL(prop.getProperty("GMAILURL"));
 		Thread.sleep(2000);
 		CommonFunctions.fn_LoginToGmail(gmailPageObject, ExcelUtil.getCellData("Login Details", 2, 1),
 				ExcelUtil.getCellData("Login Details", 2, 2));
-		
+
 		// Get the number of windows before clicking on Get Started
 		final int windowsBefore = driver.getWindowHandles().size();
 
 		// Search and click on email
-		CommonFunctions.fn_SearchAndClickOnGmail(gmailPageObject, "You got a reply on your review on SocialSurvey.", scriptStartTime);
+		CommonFunctions.fn_SearchAndClickOnGmail(gmailPageObject, "You got a reply on your review on SocialSurvey.",
+				scriptStartTime);
 		Thread.sleep(2000);
-		
+
 		// Click on reply button
 		CommonFunctions.fn_ClickOnElementUsingActions(gmailPageObject.replyButtonForEmailOpened);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(gmailPageObject.sendButtonForEmailOpened);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(gmailPageObject.messageBodyTextBox);
-		//Assert.assertEquals(gmailPageObject.subjectContent.get(0).getText(), ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for Flagging"));
-		gmailPageObject.messageBodyTextBox.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for Flagging"));
+		// Assert.assertEquals(gmailPageObject.subjectContent.get(0).getText(),
+		// ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for
+		// Flagging"));
+		gmailPageObject.messageBodyTextBox
+				.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for Flagging"));
 		CommonFunctions.fn_ClickOnElementUsingActions(gmailPageObject.sendButtonForEmailOpened);
-		Thread.sleep(2000);	
-		
-			
+		Thread.sleep(2000);
+
 		// Click on reply button
 		CommonFunctions.fn_ClickOnElementUsingActions(gmailPageObject.replyButtonFor4thEmail);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(gmailPageObject.sendButtonForEmailOpened);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(gmailPageObject.messageBodyTextBox);
-		//Assert.assertEquals(gmailPageObject.subjectContent.get(0).getText(), ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for Escalating"));
-		gmailPageObject.messageBodyTextBox.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for Escalating"));
+		// Assert.assertEquals(gmailPageObject.subjectContent.get(0).getText(),
+		// ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for
+		// Escalating"));
+		gmailPageObject.messageBodyTextBox
+				.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Reply Text for Escalating"));
 		CommonFunctions.fn_ClickOnElementUsingActions(gmailPageObject.sendButtonForEmailOpened);
 		Thread.sleep(2000);
-		
+
 		// Sign Out
 		CommonFunctions.fn_LogoutFromGmail(gmailPageObject);
-		
-    }
 
-    @And("^Company admin should be able to see the reviews in social monitor$")
-    public void company_admin_should_be_able_to_see_the_reviews_in_social_monitor() throws Throwable {
-        
-    }
-    
-    @When("^Comp Admin adds a monitor and verifies reports$")
-    public void comp_admin_adds_a_monitor_and_verifies_reports() throws Throwable {
-    	// Navigate to Social Monitor
+	}
+
+	@And("^Company admin should be able to see the reviews in social monitor$")
+	public void company_admin_should_be_able_to_see_the_reviews_in_social_monitor() throws Throwable {
+
+	}
+
+	@When("^Comp Admin adds a monitor and verifies reports$")
+	public void comp_admin_adds_a_monitor_and_verifies_reports() throws Throwable {
+		// Navigate to Social Monitor
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.socialMonitorLink, "Social Monitor",
 				"Social Monitor");
 		Thread.sleep(2000);
-		
+
 		// Navigate to Edit Monitors
 		compSocialMonitorPageObject.editMonitorButton.click();
 		Thread.sleep(2000);
@@ -1615,97 +1626,103 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(2000);
 
 		// Enter details in the popup
-		if(compSocialMonitorPageObject.addMonitorPopupHeader.getText().contains("Add Monitor")) {
+		if (compSocialMonitorPageObject.addMonitorPopupHeader.getText().contains("Add Monitor")) {
 			compSocialMonitorPageObject.keyPhraseTextBox.clear();
-			compSocialMonitorPageObject.keyPhraseTextBox.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"));
+			compSocialMonitorPageObject.keyPhraseTextBox
+					.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"));
 			Thread.sleep(2000);
-		}else {
+		} else {
 			Assert.fail("Popup header text was wrong or popup not displayed");
 		}
-		
+
 		// Select monitor if not
-		if(!(compSocialMonitorPageObject.monitorTypeDropDown.getText().contains("Keyword Monitor"))) {
+		if (!(compSocialMonitorPageObject.monitorTypeDropDown.getText().contains("Keyword Monitor"))) {
 			compSocialMonitorPageObject.keywordMonitorCheckBox.click();
 			Thread.sleep(2000);
 		}
-		
+
 		// Save
 		compSocialMonitorPageObject.addMonitorPopupSaveButton.click();
 		Thread.sleep(2000);
-	
-    }
 
-    @Then("^Monitor added should be displayed$")
-    public void monitor_added_should_be_displayed() throws Throwable {
-    	// Verify if added key is displayed in table
-    	softAssert.assertEquals(compSocialMonitorPageObject.keyPhrase.getText(), ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"), "Key is not saved and displayed");
-    	
-    	// Navigate to Stream section
-    	compSocialMonitorPageObject.viewStreamButton.click();
-    	Thread.sleep(2000);
-    	
-    	// Count the posts with the key phrase by searching
-    	compSocialMonitorPageObject.searchInputTextBox.clear();
-    	Thread.sleep(2000);
-    	compSocialMonitorPageObject.searchInputTextBox.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"));
-    	Thread.sleep(2000);
-    	compSocialMonitorPageObject.searchInputTextBox.sendKeys(Keys.ENTER);
-    	
-    	// Count the posts in stream tab
-    	Thread.sleep(4000);
-    	int countInStream = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInStream);
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	compSocialMonitorPageObject.alertsTab.click();
-    	Thread.sleep(4000);
-    	int countInAlerts = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInAlerts);
-    	compSocialMonitorPageObject.escalationsTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	int countInEscalations = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInEscalations);
-    	compSocialMonitorPageObject.resolutionsTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	int countInResolutions = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInResolutions);
-    	compSocialMonitorPageObject.trustedSourceTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	int countIntrustedSourceTab = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countIntrustedSourceTab);
-    	compSocialMonitorPageObject.streamTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	
-    	// Compare the count with expected
-    	int totalCount = countInStream+countInAlerts+countInEscalations+countInResolutions+countIntrustedSourceTab;
-    	int expectedCount = Integer.parseInt(ExcelUtil.getCellValueByColumnName("Social Monitor", "Count"));
-    	if(totalCount == expectedCount) {
-    		System.out.println("Count of posts is correct.");
-    	}
-    	else {
-    		softAssert.fail("Count of posts searched is not correct. Expected: "+expectedCount+" Actual: "+totalCount);
-    	}
-    }
+	}
 
-    @And("^Count should be correct with the count of posts$")
-    public void count_should_be_correct_with_the_count_of_posts() throws Throwable {
-        
-    	// Navigate to reports
-    	compSocialMonitorPageObject.reportsButton.click();
-    	CommonFunctions.fn_WaitTillPageLoads("Social Monitor Reporting");
-    	Thread.sleep(2000);
-    	compSocialMonitorPageObject.generateReportButton.click();
-    	Thread.sleep(2000);
-    	
-    	// Download report
-    	driver.navigate().refresh();
-    	Thread.sleep(3000);
-    	//CommonFunctions.fn_FluentWaitTillTextIsPresent(compSocialMonitorPageObject.firstRowStatusCellEleme, "Download");
-    	compSocialMonitorPageObject.firstRowStatusCellEleme = driver.findElement(By.xpath("//*[@id=\"soc-mon-recent-activity-row0\"]/td[6]"));
-    	compSocialMonitorPageObject.firstRowStatusCellEleme.findElement(By.tagName("a")).click();
+	@Then("^Monitor added should be displayed$")
+	public void monitor_added_should_be_displayed() throws Throwable {
+		// Verify if added key is displayed in table
+		softAssert.assertEquals(compSocialMonitorPageObject.keyPhrase.getText(),
+				ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"), "Key is not saved and displayed");
+
+		// Navigate to Stream section
+		compSocialMonitorPageObject.viewStreamButton.click();
+		Thread.sleep(2000);
+
+		// Count the posts with the key phrase by searching
+		compSocialMonitorPageObject.searchInputTextBox.clear();
+		Thread.sleep(2000);
+		compSocialMonitorPageObject.searchInputTextBox
+				.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"));
+		Thread.sleep(2000);
+		compSocialMonitorPageObject.searchInputTextBox.sendKeys(Keys.ENTER);
+
+		// Count the posts in stream tab
+		Thread.sleep(4000);
+		int countInStream = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInStream);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		compSocialMonitorPageObject.alertsTab.click();
+		Thread.sleep(4000);
+		int countInAlerts = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInAlerts);
+		compSocialMonitorPageObject.escalationsTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+		int countInEscalations = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInEscalations);
+		compSocialMonitorPageObject.resolutionsTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+		int countInResolutions = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInResolutions);
+		compSocialMonitorPageObject.trustedSourceTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+		int countIntrustedSourceTab = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countIntrustedSourceTab);
+		compSocialMonitorPageObject.streamTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+
+		// Compare the count with expected
+		int totalCount = countInStream + countInAlerts + countInEscalations + countInResolutions
+				+ countIntrustedSourceTab;
+		int expectedCount = Integer.parseInt(ExcelUtil.getCellValueByColumnName("Social Monitor", "Count"));
+		if (totalCount == expectedCount) {
+			System.out.println("Count of posts is correct.");
+		} else {
+			softAssert.fail(
+					"Count of posts searched is not correct. Expected: " + expectedCount + " Actual: " + totalCount);
+		}
+	}
+
+	@And("^Count should be correct with the count of posts$")
+	public void count_should_be_correct_with_the_count_of_posts() throws Throwable {
+
+		// Navigate to reports
+		compSocialMonitorPageObject.reportsButton.click();
+		CommonFunctions.fn_WaitTillPageLoads("Social Monitor Reporting");
+		Thread.sleep(2000);
+		compSocialMonitorPageObject.generateReportButton.click();
+		Thread.sleep(2000);
+
+		// Download report
+		driver.navigate().refresh();
+		Thread.sleep(3000);
+		// CommonFunctions.fn_FluentWaitTillTextIsPresent(compSocialMonitorPageObject.firstRowStatusCellEleme,
+		// "Download");
+		compSocialMonitorPageObject.firstRowStatusCellEleme = driver
+				.findElement(By.xpath("//*[@id=\"soc-mon-recent-activity-row0\"]/td[6]"));
+		compSocialMonitorPageObject.firstRowStatusCellEleme.findElement(By.tagName("a")).click();
 		Thread.sleep(3000);
 		dirPath = "C:\\Users\\savita\\Downloads\\";
 
@@ -1713,81 +1730,84 @@ public class CreateCompany extends BaseClass {
 		File socialMonitorFile = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
 		String socialMonitorFileName = socialMonitorFile.getName();
 		System.out.println(socialMonitorFileName);
-		
+
 		// Get the count of rows in report
 		int numberOfRowsInReport = ExcelUtil.getNumberOfRows(socialMonitorFileName, "Sheet0", dirPath);
 		System.out.println(numberOfRowsInReport);
-		List<String> postContentsList = ExcelUtil.getAllCellValuesByColumnName(socialMonitorFileName, "Sheet0", dirPath, "Post content");
-		Set<String>  postContentsSet= new HashSet<String>(); 
-        for (String x : postContentsList) {
-        	if(x!= null) {
-        		postContentsSet.add(x);
-        	}
-        }
-        	
-        
-        numberOfRowsInReport = postContentsSet.size()-1;
-        System.out.println(numberOfRowsInReport);
-		// Navigate to Stream section
-    	compSocialMonitorPageObject.viewStreamButton.click();
-    	Thread.sleep(2000);
-    	
-    	// Count the posts in stream tab
-    	Thread.sleep(4000);
-    	int countInStream = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInStream);
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	compSocialMonitorPageObject.alertsTab.click();
-    	Thread.sleep(4000);
-    	int countInAlerts = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInAlerts);
-    	compSocialMonitorPageObject.escalationsTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	int countInEscalations = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInEscalations);
-    	compSocialMonitorPageObject.resolutionsTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	int countInResolutions = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countInResolutions);
-    	compSocialMonitorPageObject.trustedSourceTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	int countIntrustedSourceTab = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
-    	System.out.println(countIntrustedSourceTab);
-    	compSocialMonitorPageObject.streamTab.click();
-    	CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
-    	Thread.sleep(4000);
-    	
-    	// Compare the count with expected
-    	int totalCount = countInStream+countInAlerts+countInEscalations+countInResolutions+countIntrustedSourceTab;
-    	if(totalCount == numberOfRowsInReport) {
-    		System.out.println("Count of posts is correct.");
-    	}
-    	else {
-    		softAssert.fail("Count of total posts is not correct. Expected: "+numberOfRowsInReport+" Actual: "+totalCount);
-    	}
+		List<String> postContentsList = ExcelUtil.getAllCellValuesByColumnName(socialMonitorFileName, "Sheet0", dirPath,
+				"Post content");
+		Set<String> postContentsSet = new HashSet<String>();
+		for (String x : postContentsList) {
+			if (x != null) {
+				postContentsSet.add(x);
+			}
+		}
 
-    	// Delete the Key added
-    	compSocialMonitorPageObject.editMonitorButton.click();
-    	Thread.sleep(2000);
-    	compSocialMonitorPageObject.monitorSearchInputTextBox.clear();
-    	compSocialMonitorPageObject.monitorSearchInputTextBox.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"));
-    	compSocialMonitorPageObject.monitorSearchInputTextBox.sendKeys(Keys.ENTER);
-    	Thread.sleep(2000);
-    	if(compSocialMonitorPageObject.keyPhrase.getText().contains(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"))) {
-    		compSocialMonitorPageObject.editMonitorCheckBox.click();
-    		Thread.sleep(2000);
-    		compSocialMonitorPageObject.selectActionDropDown.click();
-    		Thread.sleep(2000);
-    		compSocialMonitorPageObject.deleteSelected.click();
-    		Thread.sleep(2000);
-    	}
-    	
-    	CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
-    	softAssert.assertAll();
-    }
+		numberOfRowsInReport = postContentsSet.size() - 1;
+		System.out.println(numberOfRowsInReport);
+		// Navigate to Stream section
+		compSocialMonitorPageObject.viewStreamButton.click();
+		Thread.sleep(2000);
+
+		// Count the posts in stream tab
+		Thread.sleep(4000);
+		int countInStream = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInStream);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		compSocialMonitorPageObject.alertsTab.click();
+		Thread.sleep(4000);
+		int countInAlerts = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInAlerts);
+		compSocialMonitorPageObject.escalationsTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+		int countInEscalations = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInEscalations);
+		compSocialMonitorPageObject.resolutionsTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+		int countInResolutions = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countInResolutions);
+		compSocialMonitorPageObject.trustedSourceTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+		int countIntrustedSourceTab = Integer.parseInt(compSocialMonitorPageObject.streamCount.getText());
+		System.out.println(countIntrustedSourceTab);
+		compSocialMonitorPageObject.streamTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compSocialMonitorPageObject.alertsTab);
+		Thread.sleep(4000);
+
+		// Compare the count with expected
+		int totalCount = countInStream + countInAlerts + countInEscalations + countInResolutions
+				+ countIntrustedSourceTab;
+		if (totalCount == numberOfRowsInReport) {
+			System.out.println("Count of posts is correct.");
+		} else {
+			softAssert.fail("Count of total posts is not correct. Expected: " + numberOfRowsInReport + " Actual: "
+					+ totalCount);
+		}
+
+		// Delete the Key added
+		compSocialMonitorPageObject.editMonitorButton.click();
+		Thread.sleep(2000);
+		compSocialMonitorPageObject.monitorSearchInputTextBox.clear();
+		compSocialMonitorPageObject.monitorSearchInputTextBox
+				.sendKeys(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"));
+		compSocialMonitorPageObject.monitorSearchInputTextBox.sendKeys(Keys.ENTER);
+		Thread.sleep(2000);
+		if (compSocialMonitorPageObject.keyPhrase.getText()
+				.contains(ExcelUtil.getCellValueByColumnName("Social Monitor", "Key Phrase"))) {
+			compSocialMonitorPageObject.editMonitorCheckBox.click();
+			Thread.sleep(2000);
+			compSocialMonitorPageObject.selectActionDropDown.click();
+			Thread.sleep(2000);
+			compSocialMonitorPageObject.deleteSelected.click();
+			Thread.sleep(2000);
+		}
+
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		softAssert.assertAll();
+	}
 
 	@Given("^Login to existing company admin for survey reports$")
 	public void login_to_existing_company_admin_for_survey_reports() throws Throwable {
@@ -1831,7 +1851,7 @@ public class CreateCompany extends BaseClass {
 		CommonFunctions.fn_SelectByVisibleText(reportingPageObject.reportSelectDropDown, "Survey Results Report");
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(reportingPageObject.startDate);
-		
+
 		String startDate = ExcelUtil.getCellValueByColumnName("Survey Result Reports", "Start Date");
 		String endDate = ExcelUtil.getCellValueByColumnName("Survey Result Reports", "End Date");
 
@@ -1871,11 +1891,11 @@ public class CreateCompany extends BaseClass {
 		dirPath = "C:\\Users\\savita\\Downloads\\";
 
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Then("^Date ranges should not be less than start date and greater than end date$")
 	public void date_ranges_should_not_be_less_than_start_date_and_greater_than_end_date() throws Throwable {
-		
+
 		File surveyResultsFile = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
 		surveyResultsFileName = surveyResultsFile.getName();
 		System.out.println(surveyResultsFileName);
@@ -1911,19 +1931,17 @@ public class CreateCompany extends BaseClass {
 				System.out.println(
 						"Correct : Survey completed dates are always greater than the start date and lesser than the end date");
 			} else {
-				Assert.fail(
-						"Fail: Survey completed dates are less than the start date or greater than the end date");
+				Assert.fail("Fail: Survey completed dates are less than the start date or greater than the end date");
 			}
 		}
 
 	}
 
-
 	@And("^Survey score count should be equal in dashboard$")
 	public void survey_score_count_should_be_equal_in_dashboard() throws Throwable {
 
-		List<String> surveySources = ExcelUtil.getAllCellValuesByColumnName(surveyResultsFileName, "Sheet0",
-				dirPath, "Survey Source");
+		List<String> surveySources = ExcelUtil.getAllCellValuesByColumnName(surveyResultsFileName, "Sheet0", dirPath,
+				"Survey Source");
 		int ssReviewsCount = 0;
 		int googleReviewsCount = 0;
 		int zillowReviewsCount = 0;
@@ -1965,14 +1983,14 @@ public class CreateCompany extends BaseClass {
 		if (numberOfRows == reviewCount) {
 			System.out.println("Total count of reviews is correct.");
 		} else {
-			Assert.fail("Total count of review is incorrect. Excel: " + numberOfRows + " and UI: " +reviewCount);
+			Assert.fail("Total count of review is incorrect. Excel: " + numberOfRows + " and UI: " + reviewCount);
 		}
 
 		int ssReviewCountInUI = Integer.parseInt((reportingPageObject.completedCount.getText().split(" "))[0]);
 		if (ssReviewsCount == ssReviewCountInUI) {
 			System.out.println("Total count ss of reviews is correct.");
 		} else {
-			
+
 			Assert.fail("Total count of ss reviews is incorrect. Excel: " + ssReviewsCount + " and UI: "
 					+ ssReviewCountInUI);
 		}
@@ -2013,8 +2031,8 @@ public class CreateCompany extends BaseClass {
 	}
 
 	@Given("^Login to existing company admin for public pages verification$")
-    public void login_to_existing_company_admin_for_public_pages_verification() throws Throwable {
-		
+	public void login_to_existing_company_admin_for_public_pages_verification() throws Throwable {
+
 		// Login to the SS Admin
 		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
 		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
@@ -2037,13 +2055,13 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-  
-    }
 
-    @When("^Option Hide Public Page is enabled$")
-    public void option_hide_public_page_is_enabled() throws Throwable {
-    
-    	// Navigate to Settings page
+	}
+
+	@When("^Option Hide Public Page is enabled$")
+	public void option_hide_public_page_is_enabled() throws Throwable {
+
+		// Navigate to Settings page
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.configureLink, "Settings", "Edit Settings");
 
 		// Check for the 'Hide public pages of all agents'
@@ -2054,29 +2072,31 @@ public class CreateCompany extends BaseClass {
 		} else {
 			System.out.println("It is already unchecked and the value is false");
 		}
-		
+
 		// Check for the 'Hide public page'
-		if (compAdminSettingsPageObject.hidePublicPageCheckBoxValue.getAttribute("value")
-				.equalsIgnoreCase("true")) {
+		if (compAdminSettingsPageObject.hidePublicPageCheckBoxValue.getAttribute("value").equalsIgnoreCase("true")) {
 			compAdminSettingsPageObject.hidePublicPageCheckBox.click();
 			Thread.sleep(2000);
 		} else {
 			System.out.println("It is already unchecked and the value is false");
 		}
-		
-		// Navigate to Edit Profile Page and check for the public pages of Company, Region and Office
+
+		// Navigate to Edit Profile Page and check for the public pages of Company,
+		// Region and Office
 		// Navigate to edit profile
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.editProfileLink, "Edit Profile",
 				"Profile Settings");
-		
+
 		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.name);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.publicPageURL);
-		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		
+		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+
 		// Navigate to Public Page URL for Company
 		final int windowsBefore = driver.getWindowHandles().size();
 		Thread.sleep(2000);
@@ -2087,22 +2107,27 @@ public class CreateCompany extends BaseClass {
 		String parentWindow = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
-		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(), "Average rating at the top is not displayed");
+		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(),
+				"Average rating at the top is not displayed");
 		Assert.assertTrue(compPublicPageObject.reviewCount.isDisplayed(), "Review count at the top is not displayed");
-		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(), "Company logo at the right top corner is not displayed");
+		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(),
+				"Company logo at the right top corner is not displayed");
 		driver.close();
 		driver.switchTo().window(parentWindow);
-		
+
 		// Change to R egion
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Region"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Region"));
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.name);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.publicPageURL);
-		
+
 		// Verify for the public page URL
-		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
 
 		// Navigate to Public Page URL for Region
 		final int windowsBefore1 = driver.getWindowHandles().size();
@@ -2114,22 +2139,27 @@ public class CreateCompany extends BaseClass {
 		String parentWindow1 = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
-		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(), "Average rating at the top is not displayed");
+		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(),
+				"Average rating at the top is not displayed");
 		Assert.assertTrue(compPublicPageObject.reviewCount.isDisplayed(), "Review count at the top is not displayed");
-		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(), "Company logo at the right top corner is not displayed");
+		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(),
+				"Company logo at the right top corner is not displayed");
 		driver.close();
 		driver.switchTo().window(parentWindow1);
-		
+
 		// Change to Office
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Office"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Office"));
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.name);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.publicPageURL);
-		
+
 		// Verify for the public page URL
-		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
 
 		// Navigate to Public Page URL for Office
 		final int windowsBefore2 = driver.getWindowHandles().size();
@@ -2141,26 +2171,30 @@ public class CreateCompany extends BaseClass {
 		String parentWindow2 = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
-		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(), "Average rating at the top is not displayed");
+		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(),
+				"Average rating at the top is not displayed");
 		Assert.assertTrue(compPublicPageObject.reviewCount.isDisplayed(), "Review count at the top is not displayed");
-		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(), "Company logo at the right top corner is not displayed");
+		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(),
+				"Company logo at the right top corner is not displayed");
 		driver.close();
 		driver.switchTo().window(parentWindow2);
-		
-		//Select the company again
+
+		// Select the company again
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(3000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
 		Thread.sleep(3000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.name);
-		
-		//Navigate to Manage Team
+
+		// Navigate to Manage Team
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
+
 		// Search the agent
 		companyName = ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Agent");
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.searchInputTextBox);
@@ -2177,12 +2211,12 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-		
-		//Navigate to Edit Profile
+
+		// Navigate to Edit Profile
 		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.editProfileLink, "Edit Profile", "Profile Settings");
 		CommonFunctions.fn_WaitForAnElementToBeVisible(agentProfilePageObject.instagramIcon);
 		Assert.assertTrue(agentProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed");
-		
+
 		// Navigate to Public Page URL for Region
 		final int windowsBefore3 = driver.getWindowHandles().size();
 		Thread.sleep(3000);
@@ -2192,10 +2226,13 @@ public class CreateCompany extends BaseClass {
 		String parentWindow3 = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
-		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(), "Average rating at the top is not displayed");
+		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(),
+				"Average rating at the top is not displayed");
 		Assert.assertTrue(compPublicPageObject.reviewCount.isDisplayed(), "Review count at the top is not displayed");
-		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(), "Agent logo at the right top corner is not displayed");
+		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(),
+				"Agent logo at the right top corner is not displayed");
 		driver.close();
 		driver.switchTo().window(parentWindow3);
 
@@ -2203,7 +2240,7 @@ public class CreateCompany extends BaseClass {
 		agentDashboardPageObject.userImage.click();
 		agentDashboardPageObject.switchToAdminItem.click();
 		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
-		
+
 		// Search for the company again
 		companyName = ExcelUtil.getCellData("Login Details", 7, 3);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
@@ -2220,8 +2257,8 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-    
-    	// Navigate to Settings page
+
+		// Navigate to Settings page
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.configureLink, "Settings", "Edit Settings");
 
 		// Check for the 'Hide public pages of all agents'
@@ -2231,37 +2268,39 @@ public class CreateCompany extends BaseClass {
 			Thread.sleep(2000);
 		} else {
 			System.out.println("It is already checked and the value is true");
-		}		
+		}
 
 		// Check for the 'Hide public page'
-		if (compAdminSettingsPageObject.hidePublicPageCheckBoxValue.getAttribute("value")
-				.equalsIgnoreCase("false")) {
+		if (compAdminSettingsPageObject.hidePublicPageCheckBoxValue.getAttribute("value").equalsIgnoreCase("false")) {
 			compAdminSettingsPageObject.hidePublicPageCheckBox.click();
 			Thread.sleep(2000);
 		} else {
 			System.out.println("It is already checked and the value is true");
 		}
-    }	
+	}
 
-    @Then("^Public pages for all should be hidden$")
-    public void public_pages_for_all_should_be_hidden() throws Throwable {
-        
-    	// Navigate to Edit Profile Page and check for the public pages of Company, Region and Office
+	@Then("^Public pages for all should be hidden$")
+	public void public_pages_for_all_should_be_hidden() throws Throwable {
+
+		// Navigate to Edit Profile Page and check for the public pages of Company,
+		// Region and Office
 		// Navigate to edit profile
-    	Thread.sleep(2000);
+		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.editProfileLink, "Edit Profile",
 				"Profile Settings");
-		
+
 		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.name);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.publicPageURL);
-		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		
+		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+
 		// Navigate to Public Page URL for Company
 		final int windowsBefore = driver.getWindowHandles().size();
 		Thread.sleep(2000);
@@ -2271,17 +2310,18 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(4000);
 		String parentWindow = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
-		Assert.assertTrue(compPublicPageObject.error404.isDisplayed(), "Public page URL is displayed although the hide public page is cheked");
+		Assert.assertTrue(compPublicPageObject.error404.isDisplayed(),
+				"Public page URL is displayed although the hide public page is cheked");
 		driver.close();
 		driver.switchTo().window(parentWindow);
-		
-		//Navigate to Manage Team
+
+		// Navigate to Manage Team
 		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
+
 		// Search the agent
 		companyName = ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Agent");
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.searchInputTextBox);
@@ -2298,17 +2338,17 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-		
-		//Navigate to Edit Profile
+
+		// Navigate to Edit Profile
 		Thread.sleep(2000);
 		Assert.assertFalse(CommonFunctions.isElementPresent(By.xpath("//a[text()='Edit Profile']")));
-		
-		//Switch to admin
+
+		// Switch to admin
 		agentDashboardPageObject.userImage.click();
 		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.switchToAdminItem, "Hierarchy", "Hierarchy");
 		Thread.sleep(2000);
-		
+
 		// Search for the company again
 		companyName = ExcelUtil.getCellData("Login Details", 7, 3);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
@@ -2326,13 +2366,13 @@ public class CreateCompany extends BaseClass {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
 
-    }
-    
-    @And("^Public pages are dispalyed when unchecked$")
-    public void public_pages_are_dispalyed_when_unchecked() throws Throwable {
-    	
-    	// Navigate to Settings page
-    	Thread.sleep(2000);
+	}
+
+	@And("^Public pages are dispalyed when unchecked$")
+	public void public_pages_are_dispalyed_when_unchecked() throws Throwable {
+
+		// Navigate to Settings page
+		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.configureLink, "Settings", "Edit Settings");
 
 		// Check for the 'Hide public pages of all agents'
@@ -2343,29 +2383,31 @@ public class CreateCompany extends BaseClass {
 		} else {
 			System.out.println("It is already unchecked and the value is false");
 		}
-		
+
 		// Check for the 'Hide public page'
-		if (compAdminSettingsPageObject.hidePublicPageCheckBoxValue.getAttribute("value")
-				.equalsIgnoreCase("true")) {
+		if (compAdminSettingsPageObject.hidePublicPageCheckBoxValue.getAttribute("value").equalsIgnoreCase("true")) {
 			compAdminSettingsPageObject.hidePublicPageCheckBox.click();
 			Thread.sleep(2000);
 		} else {
 			System.out.println("It is already unchecked and the value is false");
 		}
-		
-		// Navigate to Edit Profile Page and check for the public pages of Company, Region and Office
+
+		// Navigate to Edit Profile Page and check for the public pages of Company,
+		// Region and Office
 		// Navigate to edit profile
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.editProfileLink, "Edit Profile",
 				"Profile Settings");
-		
+
 		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Company"));
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.name);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.publicPageURL);
-		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		
+		Assert.assertTrue(editProfilePageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+
 		// Navigate to Public Page URL for Company
 		final int windowsBefore = driver.getWindowHandles().size();
 		Thread.sleep(2000);
@@ -2376,18 +2418,21 @@ public class CreateCompany extends BaseClass {
 		String parentWindow = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
-		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(), "Average rating at the top is not displayed");
+		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(),
+				"Average rating at the top is not displayed");
 		Assert.assertTrue(compPublicPageObject.reviewCount.isDisplayed(), "Review count at the top is not displayed");
-		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(), "Company logo at the right top corner is not displayed");
+		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(),
+				"Company logo at the right top corner is not displayed");
 		driver.close();
 		driver.switchTo().window(parentWindow);
-    			    			
-		//Navigate to Manage Team
+
+		// Navigate to Manage Team
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
+
 		// Search the agent
 		companyName = ExcelUtil.getCellValueByColumnName("Public Pages Verification", "Agent");
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.searchInputTextBox);
@@ -2404,13 +2449,13 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-		
-		//Navigate to Edit Profile
+
+		// Navigate to Edit Profile
 		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.editProfileLink, "Edit Profile", "Profile Settings");
 		CommonFunctions.fn_WaitForAnElementToBeVisible(agentProfilePageObject.instagramIcon);
 		Assert.assertTrue(agentProfilePageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed");
-		
+
 		// Navigate to Public Page URL for Agent
 		final int windowsBefore3 = driver.getWindowHandles().size();
 		Thread.sleep(3000);
@@ -2420,429 +2465,99 @@ public class CreateCompany extends BaseClass {
 		String parentWindow3 = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
-		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(), "Public page URL is not displayed although the hide public page is uncheked");
-		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(), "Average rating at the top is not displayed");
+		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
+				"Public page URL is not displayed although the hide public page is uncheked");
+		Assert.assertTrue(compPublicPageObject.starAverageRating.isDisplayed(),
+				"Average rating at the top is not displayed");
 		Assert.assertTrue(compPublicPageObject.reviewCount.isDisplayed(), "Review count at the top is not displayed");
-		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(), "Agent logo at the right top corner is not displayed");
+		Assert.assertTrue(compPublicPageObject.companyLogo.isDisplayed(),
+				"Agent logo at the right top corner is not displayed");
 		driver.close();
 		driver.switchTo().window(parentWindow3);
-    	
-    	CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
-    }
 
-    @Given("^Login to existing company admin for javascript pages verification$")
-    public void login_to_existing_company_admin_for_javascript_pages_verification() throws Throwable {
-        
-    	// Login to the existing company admin
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+	}
+
+	@Given("^Login to existing company admin for javascript pages verification$")
+	public void login_to_existing_company_admin_for_javascript_pages_verification() throws Throwable {
+
+		// Login to the existing company admin
 		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
-		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 8, 1), ExcelUtil.getCellData("Login Details", 8, 2));
-		
-    }
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 8, 1),
+				ExcelUtil.getCellData("Login Details", 8, 2));
 
-    @When("^Company admin makes changes in java script widget and save by overriding$")
-    public void company_admin_makes_changes_in_java_script_widget_and_save_by_overriding() throws Throwable {
-        
-    	//Navigate to JavaScript Widget
+	}
+
+	@When("^Company admin makes changes in java script widget and save by overriding$")
+	public void company_admin_makes_changes_in_java_script_widget_and_save_by_overriding() throws Throwable {
+
+		// Navigate to JavaScript Widget
 		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
 		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
 		Thread.sleep(2000);
 		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
 				"Javascript Widget");
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
-		
+
 		// Select the company admin in dashboard selection dropdown
-		Thread.sleep(2000);		
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
 		Thread.sleep(2000);
-		
+
 		// Get the default values in strings
 		buttonOneOpacity = javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value");
 		buttonTwoOpacity = javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value");
 		reviewLoaderOpacity = javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value");
 		initialReviewCount = javaScriptWidgetPageObject.initialReviewCount.getAttribute("value");
 		onLoadReviewCount = javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value");
-		 onLoadButtonSize = javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value");
-		 buttonOneLink = javaScriptWidgetPageObject.buttonOneLink.getAttribute("value");
-		 buttonTwoLink = javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value");
-		 socialSurveyFilter = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox);
-		 socialSurveyVerifiedFilter = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox);
-		 zillowFilter = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox);
-		 hideBarGraphValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox);
-		 hideOptionsValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox);
-		 hideContactBtnValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox);
-		 hideWriteReviewButtonValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox);
-		 allowModestRatingValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox);
-		
-		// Values to enter 
-		 buttonOneOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Button One Opacity");
-		 buttonTwoOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Button Two Opacity");
-		 reviewLoaderOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Review Loader Opacity");
-		 initialReviewCountToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Initial Review Count");
-		 onLoadReviewCountToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "On Load Review Count");
-		 onLoadButtonSizeToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Maximum Button Width");
-		 buttonOneLinkToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Button One Link");
-		 buttonTwoLinkToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Button Two Link");
-		 socialSurveyFilterToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "SocialSurvey");
-		 socialSurveyVerifiedFilterToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "SocialSurvey Verified");
-		 zillowFilterToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Zillow");
-		 hideBarGraphValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Hide Bar Graph Initially");
-		 hideOptionsValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Hide Options Tab Initially");
-		 hideContactBtnValueToEnter= ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Hide Contact Button");
-		 hideWriteReviewButtonValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Hide Write Review Button");
-		 allowModestRatingValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Allow Modest Branding");
-		
-    	// Enter the values in fields
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.buttonOneOpacity.clear();
-		javaScriptWidgetPageObject.buttonOneOpacity.sendKeys(buttonOneOpacityToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.buttonTwoOpacity.clear();
-		javaScriptWidgetPageObject.buttonTwoOpacity.sendKeys(buttonTwoOpacityToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.reviewLoaderOpacity.clear();
-		javaScriptWidgetPageObject.reviewLoaderOpacity.sendKeys(reviewLoaderOpacityToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.initialReviewCount.clear();
-		javaScriptWidgetPageObject.initialReviewCount.sendKeys(initialReviewCountToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.onLoadReviewCount.clear();
-		javaScriptWidgetPageObject.onLoadReviewCount.sendKeys(onLoadReviewCountToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.onLoadButtonSize.clear();
-		javaScriptWidgetPageObject.onLoadButtonSize.sendKeys(onLoadButtonSizeToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.buttonOneLink.clear();
-		javaScriptWidgetPageObject.buttonOneLink.sendKeys(buttonOneLinkToEnter);
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.buttonTwoLink.clear();
-		javaScriptWidgetPageObject.buttonTwoLink.sendKeys(buttonTwoLinkToEnter);
-		Thread.sleep(2000);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyCheckBox, socialSurveyFilterToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox, socialSurveyVerifiedFilterToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterZillowCheckBox, zillowFilterToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideBarGraphCheckBox, hideBarGraphValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideOptionsTabCheckBox, hideOptionsValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideContactButtonCheckBox, hideContactBtnValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox, hideWriteReviewButtonValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.allowModestRatingCheckBox, allowModestRatingValueToEnter);		
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.saveOrOverrideButton.click();
-		Thread.sleep(2000);
-	
-		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
-			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
-			Thread.sleep(2000);
-			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
-			Thread.sleep(2000);
-			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
-			Thread.sleep(2000);
-		}
-		
-		// Verify for the values in company admin java script widget after saving
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		// Select the region admin in dashboard selection dropdown
-		Thread.sleep(2000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
-		Thread.sleep(2000);
-		
-		System.out.println("Value of filter check box "+CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox));
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Social survey filter value is not correct.");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
-		
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
+		onLoadButtonSize = javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value");
+		buttonOneLink = javaScriptWidgetPageObject.buttonOneLink.getAttribute("value");
+		buttonTwoLink = javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value");
+		socialSurveyFilter = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox);
+		socialSurveyVerifiedFilter = CommonFunctions
+				.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox);
+		zillowFilter = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox);
+		hideBarGraphValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox);
+		hideOptionsValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox);
+		hideContactBtnValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox);
+		hideWriteReviewButtonValue = CommonFunctions
+				.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox);
+		allowModestRatingValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox);
 
-		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
-				
-		//Navigate to Manage Team
-		Thread.sleep(2000);
-		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
-				"User Management");
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
-		// Search the agent
-		companyName = ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Agent");
-		Thread.sleep(2000);
-		System.out.println(companyName);
-		manageTeamPageObject.searchInputTextBox.sendKeys(companyName);
-		Thread.sleep(2000);
-		manageTeamPageObject.searchInputTextBox.sendKeys(Keys.ENTER);
-		Thread.sleep(2000);
+		// Values to enter
+		buttonOneOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Button One Opacity");
+		buttonTwoOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Button Two Opacity");
+		reviewLoaderOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Review Loader Opacity");
+		initialReviewCountToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Initial Review Count");
+		onLoadReviewCountToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"On Load Review Count");
+		onLoadButtonSizeToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Maximum Button Width");
+		buttonOneLinkToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Button One Link");
+		buttonTwoLinkToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Button Two Link");
+		socialSurveyFilterToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "SocialSurvey");
+		socialSurveyVerifiedFilterToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"SocialSurvey Verified");
+		zillowFilterToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript", "Zillow");
+		hideBarGraphValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Hide Bar Graph Initially");
+		hideOptionsValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Hide Options Tab Initially");
+		hideContactBtnValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Hide Contact Button");
+		hideWriteReviewButtonValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Hide Write Review Button");
+		allowModestRatingValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
+				"Allow Modest Branding");
 
-		// Click on login as if the agent searched is found
-		if (manageTeamPageObject.agentName.getText().contains(companyName)) {
-			manageTeamPageObject.agentLoginAs.click();
-			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
-		} else {
-			Assert.fail("Company is not searched and displayed  in first row.");
-		}
-		
-		//Navigate to Widgets page
-		Thread.sleep(4000);
-		agentDashboardPageObject.configureLink.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets",
-				"Widgets");
-		Thread.sleep(2000);
-		
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		
-    }
-
-    @Then("^Values of the fields should be overridden for lower hierarchy$")
-    public void values_of_the_fields_should_be_overridden_for_lower_hierarchy() throws Throwable {
-        
-		// Switch  to admin for verifying the values when region admin changes the values
-		Thread.sleep(3000);
-		agentDashboardPageObject.userImage.click();
-		Thread.sleep(2000);
-		agentDashboardPageObject.switchToAdminItem.click();
-		Thread.sleep(2000);
-				
-		//Navigate to JavaScript Widget
-		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
-		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
-		Thread.sleep(2000);
-		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
-				"Javascript Widget");
-		CommonFunctions.fn_WaitTillPageLoads("Widgets");
-				
-		// Select the region admin in dashboard selection dropdown
-		Thread.sleep(2000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
-		Thread.sleep(2000);
-		
-		// Reset it to default values
-		javaScriptWidgetPageObject.resetConfigButton.click();
-		Thread.sleep(2000);
-		
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.saveOrOverrideButton.click();
-		Thread.sleep(2000);
-	
-		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
-			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
-			Thread.sleep(2000);
-			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
-			Thread.sleep(2000);
-			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
-			Thread.sleep(2000);
-		}
-		
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity , javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount , javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount , javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize , javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLink , javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink , javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
-		
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity , javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount , javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount , javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize , javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLink , javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink , javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
-				
-		//Navigate to Manage Team
-		Thread.sleep(2000);
-		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
-				"User Management");
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
-		// Search the agent
-		companyName = ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Agent");
-		Thread.sleep(2000);
-		System.out.println(companyName);
-		manageTeamPageObject.searchInputTextBox.sendKeys(companyName);
-		Thread.sleep(2000);
-		manageTeamPageObject.searchInputTextBox.sendKeys(Keys.ENTER);
-		Thread.sleep(2000);
-
-		// Click on login as if the agent searched is found
-		if (manageTeamPageObject.agentName.getText().contains(companyName)) {
-			manageTeamPageObject.agentLoginAs.click();
-			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
-		} else {
-			Assert.fail("Company is not searched and displayed  in first row.");
-		}
-		
-		//Navigate to Widgets page
-		Thread.sleep(4000);
-		agentDashboardPageObject.configureLink.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets",
-				"Widgets");
-		Thread.sleep(2000);
-		
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity , javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount , javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount , javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize , javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLink , javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink , javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		// Switch  to admin for verifying the values when region admin changes the values
-		Thread.sleep(3000);
-		agentDashboardPageObject.userImage.click();
-		Thread.sleep(2000);
-		agentDashboardPageObject.switchToAdminItem.click();
-		Thread.sleep(2000);
-		
-		//Navigate to JavaScript Widget
-		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
-		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
-		Thread.sleep(2000);
-		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
-				"Javascript Widget");
-		CommonFunctions.fn_WaitTillPageLoads("Widgets");
-
-		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
-		
 		// Enter the values in fields
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.buttonOneOpacity.clear();
@@ -2870,19 +2585,22 @@ public class CreateCompany extends BaseClass {
 		javaScriptWidgetPageObject.buttonTwoLink.sendKeys(buttonTwoLinkToEnter);
 		Thread.sleep(2000);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyCheckBox, socialSurveyFilterToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox, socialSurveyVerifiedFilterToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox,
+				socialSurveyVerifiedFilterToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterZillowCheckBox, zillowFilterToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideBarGraphCheckBox, hideBarGraphValueToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideOptionsTabCheckBox, hideOptionsValueToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideContactButtonCheckBox, hideContactBtnValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox, hideWriteReviewButtonValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.allowModestRatingCheckBox, allowModestRatingValueToEnter);		
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox,
+				hideWriteReviewButtonValueToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.allowModestRatingCheckBox,
+				allowModestRatingValueToEnter);
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.saveOrOverrideButton.click();
 		Thread.sleep(2000);
-	
+
 		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
 			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
 			Thread.sleep(2000);
 			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
@@ -2890,41 +2608,583 @@ public class CreateCompany extends BaseClass {
 			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
 			Thread.sleep(2000);
 		}
-		
-		
+
 		// Verify for the values in company admin java script widget after saving
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
-		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);		
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the region admin in dashboard selection dropdown
+		Thread.sleep(2000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
+		Thread.sleep(2000);
+
+		System.out.println("Value of filter check box "
+				+ CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox));
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox),
+				"Social survey filter value is not correct.");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the Office admin in dashboard selection dropdown
+		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(1000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
 		Thread.sleep(3000);
-				
-		//Navigate to Manage Team
+
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the comp admin in dashboard selection dropdown
+		Thread.sleep(3000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(1000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		Thread.sleep(3000);
+
+		// Navigate to Manage Team
 		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
+
+		// Search the agent
+		companyName = ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Agent");
+		Thread.sleep(2000);
+		System.out.println(companyName);
+		manageTeamPageObject.searchInputTextBox.sendKeys(companyName);
+		Thread.sleep(2000);
+		manageTeamPageObject.searchInputTextBox.sendKeys(Keys.ENTER);
+		Thread.sleep(2000);
+
+		// Click on login as if the agent searched is found
+		if (manageTeamPageObject.agentName.getText().contains(companyName)) {
+			manageTeamPageObject.agentLoginAs.click();
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			Assert.fail("Company is not searched and displayed  in first row.");
+		}
+
+		// Navigate to Widgets page
+		Thread.sleep(4000);
+		agentDashboardPageObject.configureLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets", "Widgets");
+		Thread.sleep(2000);
+
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+	}
+
+	@Then("^Values of the fields should be overridden for lower hierarchy$")
+	public void values_of_the_fields_should_be_overridden_for_lower_hierarchy() throws Throwable {
+
+		// Switch to admin for verifying the values when region admin changes the values
+		Thread.sleep(3000);
+		agentDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		agentDashboardPageObject.switchToAdminItem.click();
+		Thread.sleep(2000);
+
+		// Navigate to JavaScript Widget
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
+		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
+				"Javascript Widget");
+		CommonFunctions.fn_WaitTillPageLoads("Widgets");
+
+		// Select the region admin in dashboard selection dropdown
+		Thread.sleep(2000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
+		Thread.sleep(2000);
+
+		// Reset it to default values
+		javaScriptWidgetPageObject.resetConfigButton.click();
+		Thread.sleep(2000);
+
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.saveOrOverrideButton.click();
+		Thread.sleep(2000);
+
+		// Override and save
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
+			Thread.sleep(2000);
+			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
+			Thread.sleep(2000);
+			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
+			Thread.sleep(2000);
+		}
+
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLink,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the Office admin in dashboard selection dropdown
+		Thread.sleep(3000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(1000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
+		Thread.sleep(3000);
+
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLink,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the comp admin in dashboard selection dropdown
+		Thread.sleep(3000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(1000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		Thread.sleep(3000);
+
+		// Navigate to Manage Team
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
+				"User Management");
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
+
+		// Search the agent
+		companyName = ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Agent");
+		Thread.sleep(2000);
+		System.out.println(companyName);
+		manageTeamPageObject.searchInputTextBox.sendKeys(companyName);
+		Thread.sleep(2000);
+		manageTeamPageObject.searchInputTextBox.sendKeys(Keys.ENTER);
+		Thread.sleep(2000);
+
+		// Click on login as if the agent searched is found
+		if (manageTeamPageObject.agentName.getText().contains(companyName)) {
+			manageTeamPageObject.agentLoginAs.click();
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			Assert.fail("Company is not searched and displayed  in first row.");
+		}
+
+		// Navigate to Widgets page
+		Thread.sleep(4000);
+		agentDashboardPageObject.configureLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets", "Widgets");
+		Thread.sleep(2000);
+
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLink,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Switch to admin for verifying the values when region admin changes the values
+		Thread.sleep(3000);
+		agentDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		agentDashboardPageObject.switchToAdminItem.click();
+		Thread.sleep(2000);
+
+		// Navigate to JavaScript Widget
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
+		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
+				"Javascript Widget");
+		CommonFunctions.fn_WaitTillPageLoads("Widgets");
+
+		// Select the Office admin in dashboard selection dropdown
+		Thread.sleep(3000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(1000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
+		Thread.sleep(3000);
+
+		// Enter the values in fields
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.buttonOneOpacity.clear();
+		javaScriptWidgetPageObject.buttonOneOpacity.sendKeys(buttonOneOpacityToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.buttonTwoOpacity.clear();
+		javaScriptWidgetPageObject.buttonTwoOpacity.sendKeys(buttonTwoOpacityToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.reviewLoaderOpacity.clear();
+		javaScriptWidgetPageObject.reviewLoaderOpacity.sendKeys(reviewLoaderOpacityToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.initialReviewCount.clear();
+		javaScriptWidgetPageObject.initialReviewCount.sendKeys(initialReviewCountToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.onLoadReviewCount.clear();
+		javaScriptWidgetPageObject.onLoadReviewCount.sendKeys(onLoadReviewCountToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.onLoadButtonSize.clear();
+		javaScriptWidgetPageObject.onLoadButtonSize.sendKeys(onLoadButtonSizeToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.buttonOneLink.clear();
+		javaScriptWidgetPageObject.buttonOneLink.sendKeys(buttonOneLinkToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.buttonTwoLink.clear();
+		javaScriptWidgetPageObject.buttonTwoLink.sendKeys(buttonTwoLinkToEnter);
+		Thread.sleep(2000);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyCheckBox, socialSurveyFilterToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox,
+				socialSurveyVerifiedFilterToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterZillowCheckBox, zillowFilterToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideBarGraphCheckBox, hideBarGraphValueToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideOptionsTabCheckBox, hideOptionsValueToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideContactButtonCheckBox, hideContactBtnValueToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox,
+				hideWriteReviewButtonValueToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.allowModestRatingCheckBox,
+				allowModestRatingValueToEnter);
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.saveOrOverrideButton.click();
+		Thread.sleep(2000);
+
+		// Override and save
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
+			Thread.sleep(2000);
+			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
+			Thread.sleep(2000);
+			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
+			Thread.sleep(2000);
+		}
+
+		// Verify for the values in company admin java script widget after saving
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the comp admin in dashboard selection dropdown
+		Thread.sleep(3000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(1000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		Thread.sleep(3000);
+
+		// Navigate to Manage Team
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
+				"User Management");
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
+
 		// Search the agent
 		companyName = ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Agent");
 		Thread.sleep(2000);
@@ -2942,96 +3202,143 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-		
-		//Navigate to Widgets page
+
+		// Navigate to Widgets page
 		Thread.sleep(2000);
 		agentDashboardPageObject.configureLink.click();
 		Thread.sleep(2000);
-		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets",
-				"Widgets");
+		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets", "Widgets");
 		Thread.sleep(2000);
-		
+
 		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-		
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
 		// Reset it to default values
 		javaScriptWidgetPageObject.resetConfigButton.click();
 		Thread.sleep(2000);
-		
+
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.saveOrOverrideButton.click();
 		Thread.sleep(2000);
-		
+
 		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
 			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
 			Thread.sleep(2000);
 			Thread.sleep(2000);
 			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
 			Thread.sleep(2000);
 		}
-		
+
 		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity , javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount , javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount , javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize , javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLink , javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink , javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValue, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacity,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacity,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCount,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCount,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSize,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLink,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLink,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValue,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
 
-    }
+	}
 
-    @And("^Javascript widget should be locked when comp admin saves by overriding and locking$")
-    public void javascript_widget_should_be_locked_when_comp_admin_saves_by_overriding_and_locking() throws Throwable {
-        
-		// Switch  to admin for verifying the values when comp admin changes the values and save by locking
+	@And("^Javascript widget should be locked when comp admin saves by overriding and locking$")
+	public void javascript_widget_should_be_locked_when_comp_admin_saves_by_overriding_and_locking() throws Throwable {
+
+		// Switch to admin for verifying the values when comp admin changes the values
+		// and save by locking
 		Thread.sleep(3000);
 		agentDashboardPageObject.userImage.click();
 		Thread.sleep(2000);
 		agentDashboardPageObject.switchToAdminItem.click();
 		Thread.sleep(2000);
-		
-		//Navigate to JavaScript Widget
+
+		// Navigate to JavaScript Widget
 		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
 		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
 		Thread.sleep(2000);
 		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
 				"Javascript Widget");
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
-		
+
 		// Select the company admin in dashboard selection dropdown
-		Thread.sleep(3000);		
+		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(1000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
 		Thread.sleep(3000);
-		
+
 		// Enter the values in fields
 		// Enter values
 		Thread.sleep(2000);
@@ -3060,19 +3367,22 @@ public class CreateCompany extends BaseClass {
 		javaScriptWidgetPageObject.buttonTwoLink.sendKeys(buttonTwoLinkToEnter);
 		Thread.sleep(2000);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyCheckBox, socialSurveyFilterToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox, socialSurveyVerifiedFilterToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox,
+				socialSurveyVerifiedFilterToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.filterZillowCheckBox, zillowFilterToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideBarGraphCheckBox, hideBarGraphValueToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideOptionsTabCheckBox, hideOptionsValueToEnter);
 		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideContactButtonCheckBox, hideContactBtnValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox, hideWriteReviewButtonValueToEnter);
-		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.allowModestRatingCheckBox, allowModestRatingValueToEnter);		
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox,
+				hideWriteReviewButtonValueToEnter);
+		CommonFunctions.checkCheckBox(javaScriptWidgetPageObject.allowModestRatingCheckBox,
+				allowModestRatingValueToEnter);
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.saveOrOverrideButton.click();
 		Thread.sleep(2000);
-			
+
 		// Override and lock
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
 			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
 			Thread.sleep(2000);
 			javaScriptWidgetPageObject.overrideAndLockCheckBoxInSaveWidgetConfigPopup.click();
@@ -3080,87 +3390,67 @@ public class CreateCompany extends BaseClass {
 			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
 			Thread.sleep(2000);
 		}
-		
+
 		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-	
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
 		// Select the region admin in dashboard selection dropdown
-		Thread.sleep(2000);		
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
 		Thread.sleep(2000);
-		
+
 		// Reset it to default values
 		javaScriptWidgetPageObject.resetConfigButton.click();
 		Thread.sleep(2000);
-		
-		Thread.sleep(2000);
-		javaScriptWidgetPageObject.saveOrOverrideButton.click();
-		Thread.sleep(2000);
-		
-		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
-			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
-			Thread.sleep(2000);
-			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
-			Thread.sleep(2000);
-			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
-			Thread.sleep(2000);
-		}
-		
-		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-	
-		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);		
-		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
-		
-		// Reset it to default values
-		javaScriptWidgetPageObject.resetConfigButton.click();
-		Thread.sleep(2000);
-		
+
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.saveOrOverrideButton.click();
 		Thread.sleep(2000);
 
 		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
 			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
 			Thread.sleep(2000);
 			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
@@ -3168,40 +3458,132 @@ public class CreateCompany extends BaseClass {
 			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
 			Thread.sleep(2000);
 		}
-		
+
 		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-	
-		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);		
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the Office admin in dashboard selection dropdown
+		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(1000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems, ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
 		Thread.sleep(3000);
-				
-		//Navigate to Manage Team
+
+		// Reset it to default values
+		javaScriptWidgetPageObject.resetConfigButton.click();
+		Thread.sleep(2000);
+
+		Thread.sleep(2000);
+		javaScriptWidgetPageObject.saveOrOverrideButton.click();
+		Thread.sleep(2000);
+
+		// Override and save
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
+			Thread.sleep(2000);
+			javaScriptWidgetPageObject.overrideAndSaveCheckBoxInSaveWidgetConfigPopup.click();
+			Thread.sleep(2000);
+			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
+			Thread.sleep(2000);
+		}
+
+		// Verify for the values
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Select the comp admin in dashboard selection dropdown
+		Thread.sleep(3000);
+		editProfilePageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(1000);
+		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
+		Thread.sleep(3000);
+
+		// Navigate to Manage Team
 		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
-		
+
 		// Search the agent
 		companyName = ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Agent");
 		Thread.sleep(2000);
@@ -3218,69 +3600,890 @@ public class CreateCompany extends BaseClass {
 		} else {
 			Assert.fail("Company is not searched and displayed  in first row.");
 		}
-		
-		//Navigate to Widgets page
+
+		// Navigate to Widgets page
 		Thread.sleep(4000);
 		agentDashboardPageObject.configureLink.click();
 		Thread.sleep(2000);
-		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets",
-				"Widgets");
+		CommonFunctions.fn_NavigateToPage(agentDashboardPageObject.javascriptWidgetLink, "Widgets", "Widgets");
 		Thread.sleep(2000);
-		
+
 		// Reset it to default values
 		javaScriptWidgetPageObject.resetConfigButton.click();
 		Thread.sleep(2000);
-		
+
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.saveOrOverrideButton.click();
 		Thread.sleep(2000);
-				
-				
+
 		// Override and save
-		if(javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
+		if (javaScriptWidgetPageObject.saveWidgetConfigPopupHeader.getText().contains("Save Widget Configuration")) {
 			javaScriptWidgetPageObject.messageTextBoxInSaveWidgetConfigPopup.sendKeys("Modified by company admin");
 			Thread.sleep(2000);
 			Thread.sleep(2000);
 			javaScriptWidgetPageObject.continueInSaveWidgetConfigPopup.click();
 			Thread.sleep(2000);
 		}
-		
+
 		// Verify for the values
-		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter, javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
-		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter, javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
-		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter, javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
-		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter, javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter, javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
-		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter, javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
-		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter, javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
-		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter, javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
-		softAssert.assertEquals(socialSurveyFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
-		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox), "Social survey verified filter value is not correct.");
-		softAssert.assertEquals(zillowFilterToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox), "Zillow filter filter value is not correct.");
-		softAssert.assertEquals(hideBarGraphValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox), "Hide bar graph value is not correct.");
-		softAssert.assertEquals(hideOptionsValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox), "Hide Options tab value is not correct.");
-		softAssert.assertEquals(hideContactBtnValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox), "Hide contact button  value is not correct.");
-		softAssert.assertEquals(hideWriteReviewButtonValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox), "Hide Write Review value is not correct.");
-		softAssert.assertEquals(allowModestRatingValueToEnter, CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox), "Allow modest rating value is not correct.");
-	
-		// Switch  to admin
+		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
+				javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value"));
+		Verify.verify(true, "Button two opacity value is not correct.", buttonTwoOpacityToEnter,
+				javaScriptWidgetPageObject.buttonTwoOpacity.getAttribute("value"));
+		Verify.verify(true, "Review Loader opacity value is not correct.", reviewLoaderOpacityToEnter,
+				javaScriptWidgetPageObject.reviewLoaderOpacity.getAttribute("value"));
+		Verify.verify(true, "Initial Review Count value is not correct.", initialReviewCountToEnter,
+				javaScriptWidgetPageObject.initialReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load review count value is not correct.", onLoadReviewCountToEnter,
+				javaScriptWidgetPageObject.onLoadReviewCount.getAttribute("value"));
+		Verify.verify(true, "On load button size is not correct.", onLoadButtonSizeToEnter,
+				javaScriptWidgetPageObject.onLoadButtonSize.getAttribute("value"));
+		Verify.verify(true, "Button one link value is not correct.", buttonOneLinkToEnter,
+				javaScriptWidgetPageObject.buttonOneLink.getAttribute("value"));
+		Verify.verify(true, "Button two link value is not correct.", buttonTwoLinkToEnter,
+				javaScriptWidgetPageObject.buttonTwoLink.getAttribute("value"));
+		softAssert.assertEquals(socialSurveyFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox), "Not matched");
+		softAssert.assertEquals(socialSurveyVerifiedFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyVerifiedCheckBox),
+				"Social survey verified filter value is not correct.");
+		softAssert.assertEquals(zillowFilterToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterZillowCheckBox),
+				"Zillow filter filter value is not correct.");
+		softAssert.assertEquals(hideBarGraphValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideBarGraphCheckBox),
+				"Hide bar graph value is not correct.");
+		softAssert.assertEquals(hideOptionsValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideOptionsTabCheckBox),
+				"Hide Options tab value is not correct.");
+		softAssert.assertEquals(hideContactBtnValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideContactButtonCheckBox),
+				"Hide contact button  value is not correct.");
+		softAssert.assertEquals(hideWriteReviewButtonValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox),
+				"Hide Write Review value is not correct.");
+		softAssert.assertEquals(allowModestRatingValueToEnter,
+				CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox),
+				"Allow modest rating value is not correct.");
+
+		// Switch to admin
 		Thread.sleep(3000);
 		agentDashboardPageObject.userImage.click();
 		Thread.sleep(2000);
 		agentDashboardPageObject.switchToAdminItem.click();
 		Thread.sleep(2000);
-		
-		//Log out
+
+		// Log out
 		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
-    	
+
 		softAssert.assertAll();
-    }
-    
+	}
+
+	@Given("^Launch the LO search URL$")
+	public void launch_the_lo_search_url() throws Throwable {
+
+		// Launch the LO search URL
+		CommonFunctions.fn_OpenURL(prop.getProperty("LOSEARCHURL"));
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitTillPageLoads("Search Professionals");
+
+		// Click on professionals link - Highest Rated - 5 rating - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.professionalsLink);
+		LOSearchPageObject.professionalsLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.highestRatedLink);
+		LOSearchPageObject.highestRatedLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star5Link);
+		LOSearchPageObject.star5Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 5);
+		}
+
+		// Click 4 star - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star4Link);
+		LOSearchPageObject.star4Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 5);
+		}
+
+		// Click 3 star - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star3Link);
+		LOSearchPageObject.star3Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 5);
+		}
+
+		driver.navigate().refresh();
+		Thread.sleep(2000);
+	}
+
+	@When("^User searches with different parameters$")
+	public void user_searches_with_different_parameters() throws Throwable {
+
+		// Click on Loan Offices link - Highest Rated - 5 rating - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.loanOfficesLink);
+		LOSearchPageObject.loanOfficesLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.highestRatedLink);
+		LOSearchPageObject.highestRatedLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star5Link);
+		LOSearchPageObject.star5Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 5);
+		}
+
+		// Click 4 star - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star4Link);
+		LOSearchPageObject.star4Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 5);
+		}
+
+		// Click 3 star - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star3Link);
+		LOSearchPageObject.star3Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 5);
+		}
+
+		driver.navigate().refresh();
+		Thread.sleep(2000);
+
+	}
+
+	@Then("^Results should be proper$")
+	public void results_should_be_proper() throws Throwable {
+
+		// Click on Companies link - Highest Rated - 5 rating - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.companiesLink);
+		LOSearchPageObject.companiesLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.highestRatedLink);
+		LOSearchPageObject.highestRatedLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star5Link);
+		LOSearchPageObject.star5Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 5.00, 5);
+		}
+
+		// Click 4 star - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star4Link);
+		LOSearchPageObject.star4Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 4.00, 5);
+		}
+
+		// Click 3 star - 100 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.star3Link);
+		LOSearchPageObject.star3Link.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews100Link);
+		LOSearchPageObject.reviews100Link.click();
+		Thread.sleep(2000);
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 100);
+		}
+
+		// Click on 50 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews50Link);
+		LOSearchPageObject.reviews50Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 50);
+		}
+
+		// Click on 5 > reviews
+		CommonFunctions.fn_WaitForAnElementToBeClickable(LOSearchPageObject.reviews5Link);
+		LOSearchPageObject.reviews5Link.click();
+		Thread.sleep(2000);
+
+		if (LOSearchPageObject.ratings.size() == 0) {
+			softAssert.assertEquals(LOSearchPageObject.textArea.getText(), "No Results found", "Not equal");
+		} else {
+			CommonFunctions.verifyForSerchedPosts(LOSearchPageObject, 3.00, 5);
+		}
+
+		driver.navigate().refresh();
+		Thread.sleep(2000);
+
+	}
+
+	@Given("^Login to existing companny for verifying reports$")
+	public void login_to_existing_companny_for_verifying_reports() throws Throwable {
+
+		// Login to the SS Admin
+		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
+				ExcelUtil.getCellData("Login Details", 1, 2));
+		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 9, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+
+	}
+
+	@When("^User downloads the reports$")
+	public void user_downloads_the_reports() throws Throwable {
+
+		// Navigate to Reporting page
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.dashBoardLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.reportingLink, "Reporting", "Reporting");
+		Thread.sleep(2000);
+		Verify.verify(reportingPageObject.reportSelectDropDown.isDisplayed());
+
+		// Select the Company User Report
+		CommonFunctions.fn_SelectByVisibleText(reportingPageObject.reportSelectDropDown, "Company User Report");
+		Thread.sleep(2000);
+		// CommonFunctions.fn_WaitForAnElementToBeVisible(reportingPageObject.startDate);
+
+		// Click on generate report button
+		reportingPageObject.generateReportButton.click();
+		Thread.sleep(2000);
+		driver.navigate().refresh();
+		Thread.sleep(2000);
+		CommonFunctions.fn_FluentWaitTillTextIsPresent(reportingPageObject.firstRowStatusCellElement, "Download");
+		reportingPageObject.firstRowStatusCellElement = driver
+				.findElement(By.xpath("//tr[@id='recent-activity-row0']/td[6]"));
+		reportingPageObject.firstRowStatusCellElement.findElement(By.tagName("a")).click();
+		Thread.sleep(3000);
+		dirPath = "C:\\Users\\savita\\Downloads\\";
+
+		File companyUserReportFile = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
+		String companyUserReportFileName = companyUserReportFile.getName();
+		System.out.println(surveyResultsFileName);
+
+		int numberOfRowsInCompUserReport = ExcelUtil.getNumberOfRows(companyUserReportFileName, "Sheet0", dirPath) - 1;
+
+		// Navigate to manage team
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "User Management",
+				"User Management");
+		Thread.sleep(3000);
+		int numberOfUsers = Integer.parseInt(manageTeamPageObject.totalCountOfUsers.getText());
+
+		// Verify for the count
+		softAssert.assertEquals(numberOfUsers, numberOfRowsInCompUserReport,
+				"Count of rows in company user report is not equal to the number of users on UI ");
+
+		// Switch to admin
+		compAdminDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.switchToSSAdmin.click();
+		Thread.sleep(4000);
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 9, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+
+		// Navigate to Reporting page
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.dashBoardLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.reportingLink, "Reporting", "Reporting");
+		Thread.sleep(2000);
+		Verify.verify(reportingPageObject.reportSelectDropDown.isDisplayed());
+
+		// Select the Verified User Report
+		CommonFunctions.fn_SelectByVisibleText(reportingPageObject.reportSelectDropDown, "Verified Users Report");
+		Thread.sleep(2000);
+		// CommonFunctions.fn_WaitForAnElementToBeVisible(reportingPageObject.startDate);
+
+		// Click on generate report button
+		reportingPageObject.generateReportButton.click();
+		Thread.sleep(70000);
+		// CommonFunctions.fn_FluentWaitTillTextIsPresent(reportingPageObject.firstRowStatusCellElement,
+		// "Download");
+		reportingPageObject.firstRowStatusCellElement = driver
+				.findElement(By.xpath("//tr[@id='recent-activity-row0']/td[6]"));
+		reportingPageObject.firstRowStatusCellElement.findElement(By.tagName("a")).click();
+		Thread.sleep(3000);
+
+		File verifiedUserReportFile = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
+		String verifiedUserReportFileName = verifiedUserReportFile.getName();
+		System.out.println(verifiedUserReportFileName);
+
+		int numberOfRowsInVerifiedUserReport = ExcelUtil.getNumberOfRows(companyUserReportFileName, "Sheet0", dirPath)
+				- 1;
+
+		// Navigate to manage team
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "User Management",
+				"User Management");
+		Thread.sleep(2000);
+		manageTeamPageObject.selectedFilterDropDown.click();
+		Thread.sleep(2000);
+		manageTeamPageObject.selectVerifiedUsers.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.selectedFilterDropDown);
+		int numberOfVerifiedUsers = Integer.parseInt(manageTeamPageObject.totalCountOfUsers.getText());
+
+		// Verify for the count
+		softAssert.assertEquals(numberOfVerifiedUsers, numberOfRowsInVerifiedUserReport,
+				"Count of rows in verified user report is not equal to the number of users on UI ");
+
+		// Switch to admin
+		compAdminDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.switchToSSAdmin.click();
+		Thread.sleep(4000);
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 9, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+
+		// Navigate to Reporting page
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.dashBoardLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.reportingLink, "Reporting", "Reporting");
+		Thread.sleep(2000);
+		Verify.verify(reportingPageObject.reportSelectDropDown.isDisplayed());
+
+		// Select the Incomplete Survey Results Report
+		CommonFunctions.fn_SelectByVisibleText(reportingPageObject.reportSelectDropDown,
+				"Incomplete Survey Results Report");
+		Thread.sleep(2000);
+		// CommonFunctions.fn_WaitForAnElementToBeVisible(reportingPageObject.startDate);
+
+		// Click on generate report button
+		reportingPageObject.generateReportButton.click();
+		Thread.sleep(2000);
+		driver.navigate().refresh();
+		Thread.sleep(60000);
+		// CommonFunctions.fn_FluentWaitTillTextIsPresent(reportingPageObject.firstRowStatusCellElement,
+		// "Download");
+		reportingPageObject.firstRowStatusCellElement = driver
+				.findElement(By.xpath("//tr[@id='recent-activity-row0']/td[6]"));
+		reportingPageObject.firstRowStatusCellElement.findElement(By.tagName("a")).click();
+		Thread.sleep(3000);
+
+		File incompleteSurveyReultsReportFile = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
+		String incompleteSurveyReultsReportFileName = incompleteSurveyReultsReportFile.getName();
+		System.out.println(incompleteSurveyReultsReportFileName);
+
+		int numberOfRowsInIncompleteSurveyReultsReport = ExcelUtil.getNumberOfRows(incompleteSurveyReultsReportFileName,
+				"Sheet0", dirPath) - 1;
+
+		// Navigate to dashboard
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.dashBoardLink, "Dashboard", "Dashboard");
+		Thread.sleep(2000);
+
+		int numberOfIncompleteSurveyReults = Integer
+				.parseInt(compAdminDashboardPageObject.incompleteSurveyCount.getText().split(" ")[0]);
+
+		// Verify for the count
+		softAssert.assertEquals(numberOfIncompleteSurveyReults, numberOfRowsInIncompleteSurveyReultsReport,
+				"Count of rows in incomplete survey results report is not equal to the number of users on UI ");
+
+	}
+
+	@Then("^Report should have the correct value with that of UI$")
+	public void report_should_have_the_correct_value_with_that_of_ui() throws Throwable {
+
+		// Switch to admin
+		compAdminDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.switchToSSAdmin.click();
+		Thread.sleep(4000);
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 9, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+
+		// Navigate to Reporting page Thread.sleep(2000);
+		compAdminDashboardPageObject.dashBoardLink.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.reportingLink, "Reporting", "Reporting");
+		Thread.sleep(2000);
+		Verify.verify(reportingPageObject.reportSelectDropDown.isDisplayed());
+
+		// Select the Survey Statistics Report
+		CommonFunctions.fn_SelectByVisibleText(reportingPageObject.reportSelectDropDown, "Survey Statistics Report");
+		Thread.sleep(2000);
+
+		// Click on generate report button
+		reportingPageObject.generateReportButton.click();
+		Thread.sleep(2000);
+		Thread.sleep(70000);
+		reportingPageObject.firstRowStatusCellElement = driver
+				.findElement(By.xpath("//tr[@id='recent-activity-row0']/td[6]"));
+		reportingPageObject.firstRowStatusCellElement.findElement(By.tagName("a")).click();
+		Thread.sleep(3000);
+
+		dirPath = "C:\\Users\\savita\\Downloads\\";
+		File surveyStatisticsReport = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
+		String surveyStatisticsReportFileName = surveyStatisticsReport.getName();
+		System.out.println(surveyStatisticsReportFileName);
+
+		List<String> branchNames = ExcelUtil.getAllCellValuesByColumnName(surveyStatisticsReportFileName, "Sheet0",
+				dirPath, "BRANCH");
+		List<String> monthNames = ExcelUtil.getAllCellValuesByColumnName(surveyStatisticsReportFileName, "Sheet0",
+				dirPath, "MONTH");
+		String timeSlot1 = ExcelUtil.getCellValueByColumnName("Reports Verification", "Time Slot1");
+		String yearStr = timeSlot1.split("_")[0];
+		String monthStr = timeSlot1.split("_")[1];
+		monthStr = CommonFunctions.fn_GetMonth(Integer.parseInt(monthStr));
+		String branch1 = ExcelUtil.getCellValueByColumnName("Reports Verification", "Branch1");
+		int rowNumber1 = 0, rowNumber2 = 0;
+		System.out.println(monthNames);
+		System.out.println("*********");
+		System.out.println(timeSlot1);
+
+		for (int i = 0; i < monthNames.size(); i++) {
+			if (monthNames.get(i).contains(timeSlot1) && branchNames.get(i).equalsIgnoreCase(branch1)) {
+				rowNumber1 = i;
+			}
+		}
+
+		System.out.println(rowNumber1);
+		String branchName1 = branchNames.get(rowNumber1);
+		System.out.println("Branch " + branchName1);
+
+		// Navigate to dashboard
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.dashBoardLink, "Dashboard", "Dashboard");
+		Thread.sleep(2000);
+
+		// Select the branch
+		compAdminDashboardPageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.dashboardSelectionDropDownItems,
+				branchName1);
+		Thread.sleep(2000);
+
+		// Select the time slot
+		compAdminDashboardPageObject.allTimeDropDown.click();
+		Thread.sleep(2000);
+		if (timeSlot1.contains("All Time") || timeSlot1.contains("This Month") || timeSlot1.contains("Last Month")
+				|| timeSlot1.contains("This Year")) {
+			CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.allTimeDropDownOptions, timeSlot1);
+			Thread.sleep(2000);
+		} else {
+			CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.allTimeDropDownOptions,
+					monthStr + " " + yearStr);
+			Thread.sleep(2000);
+		}
+
+		// Verify for the values
+		int processedCountInReport = Integer.parseInt(ExcelUtil.getCellValueByColumnName(surveyStatisticsReportFileName,
+				"Sheet0", dirPath, "TRX_RCVD", rowNumber1));
+		int processedCountOnUI = Integer.parseInt(compAdminDashboardPageObject.processedCount.getText());
+		System.out.println(processedCountInReport + " " + processedCountOnUI);
+		softAssert.assertEquals(processedCountInReport, processedCountOnUI,
+				"TRX_RCVD and processed count is not correct.");
+
+		int duplicateCountInReport = Integer.parseInt(ExcelUtil.getCellValueByColumnName(surveyStatisticsReportFileName,
+				"Sheet0", dirPath, "DUPLICATE", rowNumber1));
+		int duplicateCountOnUI = Integer.parseInt(compAdminDashboardPageObject.duplicateCount.getText());
+		softAssert.assertEquals(duplicateCountInReport, duplicateCountOnUI, "Duplicate count is not correct.");
+
+		int corruptedCountInReport = Integer.parseInt(ExcelUtil.getCellValueByColumnName(surveyStatisticsReportFileName,
+				"Sheet0", dirPath, "CORRUPTED", rowNumber1));
+		int corruptedCountOnUI = Integer.parseInt(compAdminDashboardPageObject.corruptedCount.getText());
+		softAssert.assertEquals(corruptedCountInReport, corruptedCountOnUI, "Corrupted count is not correct.");
+
+		int surveysCompletedCountInReport = Integer.parseInt(ExcelUtil.getCellValueByColumnName(
+				surveyStatisticsReportFileName, "Sheet0", dirPath, "SURVEYS COMPLETED", rowNumber1));
+		int surveysCompletedCountOnUI = Integer
+				.parseInt(compAdminDashboardPageObject.completedCount.getText().split(" ")[0]);
+		softAssert.assertEquals(surveysCompletedCountInReport, surveysCompletedCountOnUI,
+				"Completed count is not correct.");
+
+		String completedPercentageInReport = "("+ExcelUtil.getCellValueByColumnName(surveyStatisticsReportFileName,
+				"Sheet0", dirPath, "COMPLETE PERCENTAGE", rowNumber1)+"%)";
+		String completedPercentageOnUI = compAdminDashboardPageObject.completedCount.getText().split(" ")[1];
+		softAssert.assertEquals(completedPercentageInReport, completedPercentageOnUI,
+				"Completed percentage is not correct.");
+
+		int surveysInCompletedCountInReport = processedCountInReport - surveysCompletedCountInReport;
+		int surveysInCompletedCountOnUI = Integer
+				.parseInt(compAdminDashboardPageObject.incompleteSurveyCount.getText().split(" ")[0]);
+		softAssert.assertEquals(surveysInCompletedCountInReport, surveysInCompletedCountOnUI,
+				"Incompleted count is not correct.");
+
+		String incompletedPercentageInReport = "("+Integer
+				.toString((surveysInCompletedCountInReport * 100) / processedCountInReport)+"%)";
+		String incompletedPercentageOnUI = compAdminDashboardPageObject.incompleteSurveyCount.getText().split(" ")[1];
+		softAssert.assertEquals(incompletedPercentageInReport, incompletedPercentageOnUI,
+				"Incompleted percentage is not correct.");
+
+		/* **second branch** */
+		String timeSlot2 = ExcelUtil.getCellValueByColumnName("Reports Verification", "Time Slot2");
+		String yearStr2 = timeSlot1.split("_")[0];
+		String monthStr2 = timeSlot1.split("_")[1];
+		monthStr2 = CommonFunctions.fn_GetMonth(Integer.parseInt(monthStr2));
+		String branch2 = ExcelUtil.getCellValueByColumnName("Reports Verification", "Branch1");
+
+		for (int i = 0; i < monthNames.size(); i++) {
+			if (monthNames.get(i).contains(timeSlot2) && branchNames.get(i).equalsIgnoreCase(branch2)) {
+				rowNumber2 = i;
+			}
+		}
+
+		System.out.println(rowNumber2);
+		String branchName2 = branchNames.get(rowNumber2);
+		System.out.println("Branch " + branchName2);
+
+		// Navigate to dashboard
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.dashBoardLink, "Dashboard", "Dashboard");
+		Thread.sleep(2000);
+
+		// Select the branch
+		compAdminDashboardPageObject.dashboardSelectionDropDown.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.dashboardSelectionDropDownItems,
+				branchName2);
+		Thread.sleep(2000);
+
+		// Select the time slot
+		compAdminDashboardPageObject.allTimeDropDown.click();
+		Thread.sleep(2000);
+		if (timeSlot1.contains("All Time") || timeSlot1.contains("This Month") || timeSlot1.contains("Last Month")
+				|| timeSlot1.contains("This Year")) {
+			CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.allTimeDropDownOptions, timeSlot2);
+			Thread.sleep(2000);
+		} else {
+			CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.allTimeDropDownOptions,
+					monthStr2 + " " + yearStr2);
+			Thread.sleep(2000);
+		}
+
+		// Verify for the values
+		int processedCountInReport2 = Integer.parseInt(ExcelUtil
+				.getCellValueByColumnName(surveyStatisticsReportFileName, "Sheet0", dirPath, "TRX_RCVD", rowNumber2));
+		int processedCountOnUI2 = Integer.parseInt(compAdminDashboardPageObject.processedCount.getText());
+		System.out.println(processedCountInReport + " " + processedCountOnUI);
+		softAssert.assertEquals(processedCountInReport2, processedCountOnUI2,
+				"TRX_RCVD and processed count is not correct.");
+
+		int duplicateCountInReport2 = Integer.parseInt(ExcelUtil
+				.getCellValueByColumnName(surveyStatisticsReportFileName, "Sheet0", dirPath, "DUPLICATE", rowNumber2));
+		int duplicateCountOnUI2 = Integer.parseInt(compAdminDashboardPageObject.duplicateCount.getText());
+		softAssert.assertEquals(duplicateCountInReport2, duplicateCountOnUI2, "Duplicate count is not correct.");
+
+		int corruptedCountInReport2 = Integer.parseInt(ExcelUtil
+				.getCellValueByColumnName(surveyStatisticsReportFileName, "Sheet0", dirPath, "CORRUPTED", rowNumber2));
+		int corruptedCountOnUI2 = Integer.parseInt(compAdminDashboardPageObject.corruptedCount.getText());
+		softAssert.assertEquals(corruptedCountInReport2, corruptedCountOnUI2, "Corrupted count is not correct.");
+
+		int surveysCompletedCountInReport2 = Integer.parseInt(ExcelUtil.getCellValueByColumnName(
+				surveyStatisticsReportFileName, "Sheet0", dirPath, "SURVEYS COMPLETED", rowNumber2));
+		int surveysCompletedCountOnUI2 = Integer
+				.parseInt(compAdminDashboardPageObject.completedCount.getText().split(" ")[0]);
+		softAssert.assertEquals(surveysCompletedCountInReport2, surveysCompletedCountOnUI2,
+				"Completed count is not correct.");
+
+		String completedPercentageInReport2 = ExcelUtil.getCellValueByColumnName(surveyStatisticsReportFileName,
+				"Sheet0", dirPath, "COMPLETE PERCENTAGE", rowNumber2);
+		String completedPercentageOnUI2 = compAdminDashboardPageObject.completedCount.getText().split(" ")[1];
+		softAssert.assertEquals(completedPercentageInReport2, completedPercentageOnUI2,
+				"Completed percentage is not correct.");
+
+		int surveysInCompletedCountInReport2 = processedCountInReport2 - surveysCompletedCountInReport2;
+		int surveysInCompletedCountOnUI2 = Integer
+				.parseInt(compAdminDashboardPageObject.incompleteSurveyCount.getText().split(" ")[0]);
+		softAssert.assertEquals(surveysInCompletedCountInReport2, surveysInCompletedCountOnUI2,
+				"Incompleted count is not correct.");
+
+		String incompletedPercentageInReport2 = Integer
+				.toString((surveysInCompletedCountInReport2 * 100) / processedCountInReport2);
+		String incompletedPercentageOnUI2 = compAdminDashboardPageObject.incompleteSurveyCount.getText().split(" ")[1];
+		softAssert.assertEquals(incompletedPercentageInReport2, incompletedPercentageOnUI2,
+				"Incompleted percentage is not correct.");
+
+		// Logout
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+
+		softAssert.assertAll();
+	}
+
 	@And("^Test$")
 	public void test() throws Exception {
 
-		// Script starting time
-		scriptStartTime = CommonFunctions.fn_getCurrentDateTime();
 		
 		
 	}

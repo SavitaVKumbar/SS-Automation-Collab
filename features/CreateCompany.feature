@@ -32,7 +32,7 @@ Given Login as SS Admin or Company Admin or Agent
 When Company Admin clicks on any link or tab
 Then Screens should load properly
 
-@NewTest1
+@RegressionTest
 Scenario: Verify that review is moved to different tabs after performing the actions in social monitor
 Given Login to existing company admin
 When SS Admin performs actions on the reviews in Social Monitor
@@ -67,6 +67,24 @@ Given Login to existing company admin for javascript pages verification
 When Company admin makes changes in java script widget and save by overriding
 Then Values of the fields should be overridden for lower hierarchy
 And Javascript widget should be locked when comp admin saves by overriding and locking
+
+@RegressionTest
+Scenario: Verify for the search results in LO search
+Given Launch the LO search URL
+When User searches with different parameters
+Then Results should be proper
+
+@RegressionTest
+Scenario: Verify for the reports
+Given Login to existing companny for verifying reports
+When User downloads the reports
+Then Report should have the correct value with that of UI
+
+@NewTest
+Scenario: Verify for the reports
+Given Login to existing companny for verifying reports
+When User downloads the reports
+Then Report should have the correct value with that of UI
 
 @NewTest1
 Scenario: Test1

@@ -138,7 +138,7 @@ public class ExcelUtil {
         }
     }
     
-	public static String getCellValueByColumnName(String sheetName, String columnName) throws Exception {
+	public static String getCellValueByColumnName(String sheetName, String columnName ) throws Exception {
 		
 		setExcelFileSheet(sheetName);
 		String stringCellValue = "";
@@ -185,6 +185,66 @@ public class ExcelUtil {
 		return stringCellValue;
 		
 	}
+	
+	
+public static String getCellValueByColumnName(String excelFile, String sheetName, String path, String columnName, int j) throws Exception {
+		
+		setDownloadedSheet(excelFile, sheetName, path);
+		int columnNumber = 0;
+		row = excelWSheet.getRow(0);
+		String stringCellValue = null;
+
+		for (int i = 0; i <= row.getLastCellNum(); i++) {
+			
+			if (row.getCell(i).getStringCellValue().trim().toLowerCase().contains(columnName.trim().toLowerCase())) {
+				columnNumber = i;
+				break;
+			}
+		}
+		
+			try {
+			cell = excelWSheet.getRow(j).getCell(columnNumber);
+			}catch(NullPointerException e) {
+				System.out.println();
+				System.out.println("Cell may be null");
+			}
+			
+			if (cell.getCellType()==CellType.STRING)
+	        {
+				stringCellValue = cell.getStringCellValue();
+	        }
+	        else if(cell.getCellType() == CellType.NUMERIC)
+	        {   
+	            if (DateUtil.isCellDateFormatted(cell)) {
+	                Date date =  cell.getDateCellValue();
+	                System.out.println(date);
+	                
+	                if((!(date.equals(""))) ||  (!(date.equals(" ")))) {
+	                	stringCellValue = date.toString();		      
+	                }  
+	            }
+	            else {
+	            	Double value = cell.getNumericCellValue();
+		            Long longValue = value.longValue();
+		            stringCellValue = new String(longValue.toString());
+		            
+	            }
+	        }
+	        else if(cell.getCellType() == CellType.BOOLEAN)
+	        {
+	        	stringCellValue = new String(new Boolean(
+	                    cell.getBooleanCellValue()).toString());
+	        	
+	        }
+	        else if(cell.getCellType() == CellType.BLANK) {
+	        	stringCellValue = ""; 
+	        	
+			}
+			
+		return stringCellValue;
+		
+	}
+
 	
 	
 	public static List<String> getCellValueByColumnName1(String sheetName, String columnName) throws Exception {
@@ -302,7 +362,6 @@ public class ExcelUtil {
 			if (cell.getCellType()==CellType.STRING)
 	        {
 				stringCellValue1 = cell.getStringCellValue();
-				System.out.println(stringCellValue1);
 				stringCellValue.add(stringCellValue1);
 	        }
 	        else if(cell.getCellType() == CellType.NUMERIC)
@@ -312,8 +371,7 @@ public class ExcelUtil {
 	                System.out.println(date);
 	                
 	                if((!(date.equals(""))) ||  (!(date.equals(" ")))) {
-	                	stringCellValue1 = date.toString();
-		                System.out.println(stringCellValue1);
+	                	stringCellValue1 = date.toString();		       
 	                	stringCellValue.add(stringCellValue1);
 	                }  
 	            }

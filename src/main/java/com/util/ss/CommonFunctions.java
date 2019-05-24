@@ -29,10 +29,13 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.asserts.SoftAssert;
+
 import com.base.ss.BaseClass;
 import com.pageobjects.ss.CompAdminDashboardPage;
 import com.pageobjects.ss.CompSocialMonitorPage;
 import com.pageobjects.ss.GmailPage;
+import com.pageobjects.ss.LOSearchPage;
 import com.pageobjects.ss.LoginPage;
 import com.pageobjects.ss.SSAdminHomePage;
 import com.pageobjects.ss.SendInvitePage;
@@ -111,7 +114,7 @@ public class CommonFunctions extends BaseClass {
 	public static void fn_FluentWaitTillTextIsPresent (WebElement element, String text) {
 		
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)							
-				.withTimeout(50, TimeUnit.SECONDS) 			
+				.withTimeout(120, TimeUnit.SECONDS) 			
 				.pollingEvery(5, TimeUnit.SECONDS) 			
 				.ignoring(org.openqa.selenium.NoSuchElementException.class);
 		wait.until(ExpectedConditions.textToBePresentInElement(element, text));
@@ -591,6 +594,38 @@ public class CommonFunctions extends BaseClass {
 	    
 	}
 	
+	
+	public static String fn_GetMonth(int month){
+		String strMonth = null;
+		
+		  if(month == 1)
+			  strMonth ="Jan";
+		  else if (month == 2)
+			     strMonth ="Feb";
+		  else if (month == 3)
+			     strMonth ="March";
+		  else if (month == 4)
+			     strMonth ="Apr";
+		  else if (month == 5)
+			     strMonth ="May";
+		  else if (month == 6)
+			     strMonth ="Jun";
+		  else if (month == 7)
+			     strMonth ="Jul";
+		  else if (month == 8)
+			     strMonth ="Aug";
+		  else if (month == 9)
+			     strMonth ="Sep";
+		  else if (month == 10)
+			     strMonth ="Oct";
+		  else if (month == 11)
+			     strMonth ="Nov";
+		  else if (month == 12)
+			     strMonth ="Dec";
+		  return strMonth;
+	    
+	}
+	
 	public static boolean isElementPresent(By locatorKey) {
 	    try {
 	        driver.findElement(locatorKey);
@@ -624,5 +659,51 @@ public class CommonFunctions extends BaseClass {
 			}
 		}
 
+	}
+	
+	public static void verifyForSerchedPosts(LOSearchPage LOSearchPageObject, double ratingu, int count) throws InterruptedException {
+		SoftAssert softAssert = new SoftAssert();
+		
+		do {
+			LOSearchPageObject.ratings = driver.findElements(By.xpath("//div[@class='srch-eng-result-rat srch-eng-result-rat-txt']"));
+			LOSearchPageObject.countOfReviews = driver.findElements(By.xpath("//div[@class='srch-eng-result-rev-count srch-eng-result-rat-txt']"));
+			for(int i=0; i<LOSearchPageObject.ratings.size(); i++) {
+				double rating = Double.parseDouble(LOSearchPageObject.ratings.get(i).getText());
+				int numberOfReview = Integer.parseInt((LOSearchPageObject.countOfReviews.get(i).getText().split(" "))[0]);
+				if(rating>=ratingu) {
+					System.out.println("Rating for "+i+" post is correct");
+				}
+				else
+				{
+					softAssert.fail("Rating for "+i+" post is incorrect");
+				}
+				
+				if(numberOfReview>count) {
+					System.out.println("Count of reviews for "+i+" post is correct");
+				}
+				else
+				{
+					softAssert.fail("Count of reviews for "+i+" post is incorrect");
+				}
+			}
+			if(isElementPresent(By.xpath("//div[@class='srch-eng-page-no']/following-sibling::div"))) {
+				if(driver.findElement(By.xpath("//div[@class='srch-eng-page-no']/following-sibling::div")).isDisplayed()) {
+					driver.findElement(By.xpath("//div[@class='srch-eng-page-no']/following-sibling::div")).click();
+					Thread.sleep(4000);
+					LOSearchPageObject.ratings = driver.findElements(By.xpath("//div[@class='srch-eng-result-rat srch-eng-result-rat-txt']"));
+					LOSearchPageObject.countOfReviews = driver.findElements(By.xpath("//div[@class='srch-eng-result-rev-count srch-eng-result-rat-txt']"));
+				}
+				else {
+					System.out.println("No more posts");
+					break;
+				}
+				
+			}
+			else {
+				System.out.println("No more posts");
+				break;
+			}
+				
+		}while(Integer.parseInt(LOSearchPageObject.pageNumber.getText()) <= 5);
 	}
 }

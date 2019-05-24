@@ -27,7 +27,7 @@ import cucumber.api.CucumberOptions;
 
 @SuppressWarnings("unused")
 @CucumberOptions(features = { "features/CreateCompany.feature" }, glue = { "com.stepdefinitions.ss" }, tags = {
-		"@NewTest1" }, plugin = { "pretty", "html:target/cucumber-reports" }, monochrome = true)
+		"@NewTest" }, plugin = { "pretty", "html:target/cucumber-reports" }, monochrome = true)
 
 public class TestRunner extends AbstractTestNGCucumberTests {
 
