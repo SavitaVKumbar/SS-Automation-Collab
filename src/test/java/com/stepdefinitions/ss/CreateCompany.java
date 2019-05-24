@@ -3281,6 +3281,7 @@ public class CreateCompany extends BaseClass {
 
 		// Script starting time
 		scriptStartTime = CommonFunctions.fn_getCurrentDateTime();
+		System.out.println("Test345");
 		
 	}
 }
