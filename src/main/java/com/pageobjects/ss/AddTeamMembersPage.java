@@ -97,6 +97,9 @@ public class AddTeamMembersPage {
 	@FindBy(tagName = "li")
 	public List<WebElement> selectRegionListItems;
 	
+	@FindBy(xpath = "//li[@class='ui-menu-item']")
+	public List<WebElement> selectOfficeListItems;
+	
 	@FindBy(xpath = "//input[@id='office-address-txt']")
 	public WebElement officeAddress1;
 	

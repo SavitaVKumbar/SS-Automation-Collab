@@ -84,6 +84,10 @@ public class CompAdminDashboardPage extends BaseClass{
 	@FindBy(xpath = "//div[@id='hdr-dashboard-item']/a[@id='dashboard-link']")
 	public WebElement dashBoardLink;
 	
+	@FindBy(xpath = "//li[@id='transaction-stats-btn']")
+	public WebElement transactionStatsTab;
+	
+	
 	//Dash board Reviews Page
 	@FindBy(xpath = "//a[text()='Reviews']")
 	public WebElement reviewsTab;

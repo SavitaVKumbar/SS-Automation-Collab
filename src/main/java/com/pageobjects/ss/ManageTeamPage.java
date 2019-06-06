@@ -17,7 +17,7 @@ public class ManageTeamPage {
 	@FindBy(xpath = "//div[@class='hm-header-row hm-header-row-main clearfix']/div[contains(text(), 'View Hierarchy')]")
 	public WebElement viewHierarchyButton;
 	
-	@FindBy(xpath = "//table[@class='v-um-tbl']")
+	@FindBy(xpath = "//table[@class='v-um-tbl ms-tbl-margin']")
 	public WebElement usersTable;
 
 	@FindBy(xpath = "//div[text()='Login']")

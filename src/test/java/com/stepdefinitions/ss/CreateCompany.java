@@ -1,5 +1,7 @@
 package com.stepdefinitions.ss;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +62,7 @@ import com.pageobjects.ss.LogoutPage;
 import com.pageobjects.ss.MakeYourPaymentPage;
 import com.pageobjects.ss.ManageTeamPage;
 import com.pageobjects.ss.PublicPage;
+import com.pageobjects.ss.QuickEditPage;
 import com.pageobjects.ss.RankingSettingsPage;
 import com.pageobjects.ss.ReportingPage;
 import com.pageobjects.ss.ReportsPage;
@@ -127,8 +130,10 @@ public class CreateCompany extends BaseClass {
 	TwitterPage twitterPageObject = new TwitterPage(driver);
 	CompSocialMonitorPage compSocialMonitorPageObject = new CompSocialMonitorPage(driver);
 	LOSearchPage LOSearchPageObject = new LOSearchPage(driver);
+	QuickEditPage quickEditPageObject = new QuickEditPage(driver);
+	
 	String firstName, customerEmail, companyName, userForRegion, userForCompany, scriptStartTime, agentName, mediaType,
-			reviewText, dirPath, surveyResultsFileName;
+			reviewText, dirPath, surveyResultsFileName, regionName, branchName, publicPageURL;
 	int runInstance, reviewAtIndex, numberOfRows;
 	Date startDateFinal, endDateFinal;
 	List<String> surveySources;
@@ -143,6 +148,8 @@ public class CreateCompany extends BaseClass {
 			allowModestRatingValue;
 	SoftAssert softAssert = new SoftAssert();
 	String reviewTextToEnterFinal;
+	String currentDir = System.getProperty("user.dir");
+	String resourcesPath = currentDir + "//resources";
 
 	@Given("^Login as Social Survey Admin$")
 	public void login_as_social_survey_admin() throws Throwable {
@@ -196,6 +203,18 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(2000);
 		CommonFunctions.fn_LoginToGmail(gmailPageObject, ExcelUtil.getCellData("Login Details", 2, 1),
 				ExcelUtil.getCellData("Login Details", 2, 2));
+		Thread.sleep(3000); 
+		
+		// Navigate to staging test account
+		/*
+		 * gmailPageObject.userImage.click(); Thread.sleep(2000);
+		 * for(int i=0; i<gmailPageObject.accounts.size(); i++) {
+		 * if(gmailPageObject.accounts.get(i).getText().contains(ExcelUtil.
+		 * getCellData("Login Details", 2, 3))){
+		 * gmailPageObject.accounts.get(i).click(); Thread.sleep(5000); } }
+		 * 
+		 * CommonFunctions.fn_SwitchToNewWindow(); Thread.sleep(2000);
+		 */
 
 	}
 
@@ -259,8 +278,9 @@ public class CreateCompany extends BaseClass {
 			companyInformationPageObject.companyCountry.sendKeys(compCountry);
 			CommonFunctions.fn_ClickOnItemInDropDown(companyInformationPageObject.companyCountryListItems, compCountry);
 		}
+		String zipCodeToEnter = Integer.toString((int)Double.parseDouble(ExcelUtil.getCellValueByColumnName("Company Information", "Zip Code")));
 		companyInformationPageObject.companyZipCode
-				.sendKeys(ExcelUtil.getCellValueByColumnName("Company Information", "Zip Code"));
+				.sendKeys(zipCodeToEnter);
 		CommonFunctions.fn_SelectByVisibleText(companyInformationPageObject.companyState,
 				ExcelUtil.getCellValueByColumnName("Company Information", "State"));
 		companyInformationPageObject.companyContactNumber
@@ -272,6 +292,7 @@ public class CreateCompany extends BaseClass {
 		// Select small business in make your payment page
 		CommonFunctions.fn_WaitTillPageLoads("Make Your Payment");
 		makeYourPaymentPageObject.smallBusinessTrialButton.click();
+		Thread.sleep(2000);
 		CommonFunctions.fn_WaitTillPageLoads("Dashboard");
 
 		// Close the banner, verify if the company name is proper and logout
@@ -312,14 +333,17 @@ public class CreateCompany extends BaseClass {
 	public void company_admin_should_be_able_to_add_region_office_and_user() throws Throwable {
 
 		// Navigate to Manage Team - Add Team Members
+		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
+		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
 		CommonFunctions.fn_NavigateToPage(manageTeamPageObject.addTeamMembersButton, "Add Team Members",
 				"Build Hierarchy");
 
 		// Navigate to Region Tab
 		addTeamMembersPageObject.regionTab.click();
+		Thread.sleep(2000);
 
 		// Enter all fields and create a region
 		CommonFunctions.fn_WaitForAnElementToBeVisible(addTeamMembersPageObject.regionName);
@@ -347,7 +371,7 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(2000);
 		CommonFunctions.fn_ClickOnItemInDropDown(addTeamMembersPageObject.regionCityListValues, regionCity);
 		addTeamMembersPageObject.regionZipCode
-				.sendKeys(ExcelUtil.getCellValueByColumnName("Region Details", "Zip Code"));
+				.sendKeys(Integer.toString((int)Double.parseDouble(ExcelUtil.getCellValueByColumnName("Region Details", "Zip Code"))));
 		String[] user = ExcelUtil.getCellValueByColumnName("Region Details", "User For Region").split("@");
 		userForRegion = user[0] + "+" + runInstance + "1@" + user[1];
 		addTeamMembersPageObject.userForRegion.sendKeys(userForRegion);
@@ -392,10 +416,11 @@ public class CreateCompany extends BaseClass {
 		CommonFunctions.fn_ClickOnItemInDropDown(addTeamMembersPageObject.officeCityListValues,
 				ExcelUtil.getCellValueByColumnName("Office Details", "City"));
 		addTeamMembersPageObject.officeZipCode
-				.sendKeys(ExcelUtil.getCellValueByColumnName("Office Details", "Zip Code"));
+				.sendKeys(Integer.toString((int)Double.parseDouble(ExcelUtil.getCellValueByColumnName("Office Details", "Zip Code"))));
 		String[] userForOfc = ExcelUtil.getCellValueByColumnName("Office Details", "User For Office").split("@");
 		String userForOffice = userForOfc[0] + "+" + runInstance + "1@" + userForOfc[1];
 		addTeamMembersPageObject.userForOffice.sendKeys(userForOffice);
+		Thread.sleep(2000);
 		addTeamMembersPageObject.officeSaveButton.click();
 		Thread.sleep(2000);
 		Verify.verify(true, "Success Message is not proper.", addTeamMembersPageObject.regionAddedSuccessMsg.getText(),
@@ -441,15 +466,17 @@ public class CreateCompany extends BaseClass {
 		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
 
 		// Select past 30 days radio button
-		ssAdminHierarchyPageObject.thirtyDaysRadioButton.click();
+		//ssAdminHierarchyPageObject.thirtyDaysRadioButton.click();
 
 		// Search the new company created
 		companyName = ExcelUtil.getCellData("Login Details", 3, 3);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
 		System.out.println(companyName);
 		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
-		ssAdminHierarchyPageObject.companySearchIcon.click();
 		Thread.sleep(2000);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(Keys.ENTER);
+		//ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(5000);
 
 		// Click on login as if the company searched is found
 		System.out.println(companyName);
@@ -490,8 +517,10 @@ public class CreateCompany extends BaseClass {
 		// Navigate to Manage Team - View Hierarchy
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
+		Thread.sleep(3000);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(manageTeamPageObject.addTeamMembersButton);
 		manageTeamPageObject.viewHierarchyButton.click();
+		Thread.sleep(3000);
 
 	}
 
@@ -690,65 +719,64 @@ public class CreateCompany extends BaseClass {
 		// Facebook Connection
 		// Login to company using different url with the same new company
 
-		CommonFunctions.fn_OpenURL(prop.getProperty("URLFORFACEBOOK"));
-		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 3, 1),
-				ExcelUtil.getCellData("Login Details", 3, 2));
-		Thread.sleep(2000);
-
-		// Navigate to Settings page
-		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.configureLink, "Settings", "Edit Settings");
-
-		// Check the auto post check box if not checked
-		if (compAdminSettingsPageObject.autoPostCheckBoxValue.getAttribute("value").equalsIgnoreCase("false")) {
-			compAdminSettingsPageObject.autoPostCheckBox.click();
-		}
-
-		// Click on facebook button
-		compAdminSettingsPageObject.facebookButton.click();
-		final int windowsBefore2 = driver.getWindowHandles().size();
-
-		// Click on continue button in confirm user authentication popup
-		if (compAdminSettingsPageObject.popupHeader.isDisplayed()) {
-			Assert.assertEquals(compAdminSettingsPageObject.popupHeader.getText(), "Confirm user Authentication");
-			compAdminSettingsPageObject.popupContinueButton.click();
-		} else {
-			System.out.println("Popup is not displayed");
-		}
-
-		// Wait for new window and switch to it
-		CommonFunctions.fn_WaitForNewWindow(windowsBefore2);
-		Thread.sleep(4000);
-		String parentWindow2 = driver.getWindowHandle();
-		CommonFunctions.fn_SwitchToNewWindow();
-
-		// Enter the values and sign in
-		compAdminSettingsPageObject.facebookEmail.clear();
-		compAdminSettingsPageObject.facebookEmail
-				.sendKeys(ExcelUtil.getCellValueByColumnName("Social Media", "User Name"));
-		compAdminSettingsPageObject.facebookPassword.clear();
-		compAdminSettingsPageObject.facebookPassword
-				.sendKeys(ExcelUtil.getCellValueByColumnName("Social Media", "Password"));
-		compAdminSettingsPageObject.facebookLoginButton.click();
-		Thread.sleep(2000);
-
-		if (!(compAdminSettingsPageObject.facebookRadioButton.getSize().toString().contains("(0,0)"))) {
-			compAdminSettingsPageObject.facebookRadioButton.click();
-			compAdminSettingsPageObject.facebookSaveButton.click();
-		} else
-			System.out.println("Confirm button not displayed");
-
-		Thread.sleep(3000);
-
-		// Close this window and switch to parent window
-		driver.switchTo().window(parentWindow2);
-		Thread.sleep(1000);
-
-		// Verify if it is connected
-		Assert.assertEquals(compAdminSettingsPageObject.facebookDisconnectButton.getAttribute("title"), "Disconnect");
-
-		// Logout
-		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
-
+		/*
+		 * CommonFunctions.fn_OpenURL(prop.getProperty("URLFORFACEBOOK"));
+		 * CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject,
+		 * ExcelUtil.getCellData("Login Details", 3, 1),
+		 * ExcelUtil.getCellData("Login Details", 3, 2)); Thread.sleep(2000);
+		 * 
+		 * // Navigate to Settings page
+		 * CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.configureLink,
+		 * "Settings", "Edit Settings");
+		 * 
+		 * // Check the auto post check box if not checked if
+		 * (compAdminSettingsPageObject.autoPostCheckBoxValue.getAttribute("value").
+		 * equalsIgnoreCase("false")) {
+		 * compAdminSettingsPageObject.autoPostCheckBox.click(); }
+		 * 
+		 * // Click on facebook button
+		 * compAdminSettingsPageObject.facebookButton.click(); final int windowsBefore2
+		 * = driver.getWindowHandles().size();
+		 * 
+		 * // Click on continue button in confirm user authentication popup if
+		 * (compAdminSettingsPageObject.popupHeader.isDisplayed()) {
+		 * Assert.assertEquals(compAdminSettingsPageObject.popupHeader.getText(),
+		 * "Confirm user Authentication");
+		 * compAdminSettingsPageObject.popupContinueButton.click(); } else {
+		 * System.out.println("Popup is not displayed"); }
+		 * 
+		 * // Wait for new window and switch to it
+		 * CommonFunctions.fn_WaitForNewWindow(windowsBefore2); Thread.sleep(4000);
+		 * String parentWindow2 = driver.getWindowHandle();
+		 * CommonFunctions.fn_SwitchToNewWindow();
+		 * 
+		 * // Enter the values and sign in
+		 * compAdminSettingsPageObject.facebookEmail.clear();
+		 * compAdminSettingsPageObject.facebookEmail
+		 * .sendKeys(ExcelUtil.getCellValueByColumnName("Social Media", "User Name"));
+		 * compAdminSettingsPageObject.facebookPassword.clear();
+		 * compAdminSettingsPageObject.facebookPassword
+		 * .sendKeys(ExcelUtil.getCellValueByColumnName("Social Media", "Password"));
+		 * compAdminSettingsPageObject.facebookLoginButton.click(); Thread.sleep(2000);
+		 * 
+		 * if (!(compAdminSettingsPageObject.facebookRadioButton.getSize().toString().
+		 * contains("(0,0)"))) {
+		 * compAdminSettingsPageObject.facebookRadioButton.click();
+		 * compAdminSettingsPageObject.facebookSaveButton.click(); } else
+		 * System.out.println("Confirm button not displayed");
+		 * 
+		 * Thread.sleep(3000);
+		 * 
+		 * // Close this window and switch to parent window
+		 * driver.switchTo().window(parentWindow2); Thread.sleep(1000);
+		 * 
+		 * // Verify if it is connected
+		 * Assert.assertEquals(compAdminSettingsPageObject.facebookDisconnectButton.
+		 * getAttribute("title"), "Disconnect");
+		 * */
+		 // Logout 
+		//CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		 
 	}
 
 	@And("^Survey is sent to the user navigating to dashboard and logout$")
@@ -798,6 +826,30 @@ public class CreateCompany extends BaseClass {
 
 		// Navigate to Gmail
 		CommonFunctions.fn_OpenURL(prop.getProperty("GMAILURL"));
+		Thread.sleep(3000); 
+		/*
+		 * if(driver.getTitle().contains("Free Storage and Email from Google")) {
+		 * gmailPageObject.signIn.click(); Thread.sleep(3000);
+		 * CommonFunctions.fn_SwitchToNewWindow(); Thread.sleep(3000);
+		 * CommonFunctions.fn_LoginToGmail(gmailPageObject,
+		 * ExcelUtil.getCellData("Login Details", 2, 1),
+		 * ExcelUtil.getCellData("Login Details", 2, 2)); Thread.sleep(3000); }
+		 * CommonFunctions.fn_LoginToGmail(gmailPageObject,
+		 * ExcelUtil.getCellData("Login Details", 2, 1),
+		 * ExcelUtil.getCellData("Login Details", 2, 2)); Thread.sleep(3000);
+		 */		
+		
+		
+		// Navigate to staging test account
+		/*
+		 * gmailPageObject.userImage.click(); Thread.sleep(2000);
+		 * for(int i=0; i<gmailPageObject.accounts.size(); i++) {
+		 * if(gmailPageObject.accounts.get(i).getText().contains(ExcelUtil.
+		 * getCellData("Login Details", 2, 3))){
+		 * gmailPageObject.accounts.get(i).click(); Thread.sleep(5000); } }
+		 * 
+		 * CommonFunctions.fn_SwitchToNewWindow(); Thread.sleep(2000);
+		 */
 
 		// Get number of windows before clicking on take survey
 		final int windowsBefore = driver.getWindowHandles().size();
@@ -850,10 +902,16 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(2000);
 
 		// Answer the third survey question
-		CommonFunctions.fn_WaitTillTextIsPresentInElement(surveyPageObject.surveyOverAllExpText, "Question 3");
-		CommonFunctions.fn_WaitForAnElementToBeVisible(surveyPageObject.textArea);
-		CommonFunctions.fn_WaitForAnElementToBeClickable(surveyPageObject.textArea);
-		surveyPageObject.textArea.sendKeys("I had great experience.");
+		try {
+			
+			CommonFunctions.fn_WaitTillTextIsPresentInElement(surveyPageObject.surveyOverAllExpText, "Question 3");
+			CommonFunctions.fn_WaitForAnElementToBeVisible(surveyPageObject.textArea);
+			CommonFunctions.fn_WaitForAnElementToBeClickable(surveyPageObject.textArea);
+			surveyPageObject.textArea.sendKeys("I had great experience.");
+			Thread.sleep(2000);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		Thread.sleep(2000);
 		surveyPageObject.overallExperienceNext.click();
 		Thread.sleep(2000);
@@ -1021,6 +1079,18 @@ public class CreateCompany extends BaseClass {
 
 		// Navigate to GMAIL
 		CommonFunctions.fn_OpenURL(prop.getProperty("GMAILURL"));
+		Thread.sleep(3000); 
+		
+		// Navigate to stging test account
+		/*
+		 *gmailPageObject.userImage.click(); Thread.sleep(2000);
+		 * for(int i=0; i<gmailPageObject.accounts.size(); i++) {
+		 * if(gmailPageObject.accounts.get(i).getText().contains(ExcelUtil.
+		 * getCellData("Login Details", 2, 3))){
+		 * gmailPageObject.accounts.get(i).click(); Thread.sleep(5000); } }
+		 * 
+		 * CommonFunctions.fn_SwitchToNewWindow(); Thread.sleep(2000);
+		 */
 
 		// Search and click on the survey completed email
 		CommonFunctions.fn_SearchAndClickOnGmail(gmailPageObject, "Get the most out of this review! SHARE ON FACEBOOK",
@@ -1102,7 +1172,7 @@ public class CreateCompany extends BaseClass {
 		// Verify that page Reporting is loaded
 		Thread.sleep(2000);
 		compAdminDashboardPageObject.dashBoardLink.click();
-		Thread.sleep(2000);
+		Thread.sleep(4000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.reportingLinkCompAdmin, "Reporting",
 				"Reporting");
 		Verify.verify(reportingPageObject.reportSelectDropDown.isDisplayed());
@@ -1273,7 +1343,7 @@ public class CreateCompany extends BaseClass {
 				ExcelUtil.getCellData("Login Details", 1, 2));
 		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
 
-		// Search the company created
+		// Search the 
 		companyName = ExcelUtil.getCellData("Login Details", 5, 3);
 		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
 		System.out.println(companyName);
@@ -1295,6 +1365,7 @@ public class CreateCompany extends BaseClass {
 	public void ss_admin_performs_actions_on_the_reviews_in_social_monitor() throws Throwable {
 
 		// Navigate to Social Monitor
+		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.socialMonitorLink, "Social Monitor",
 				"Social Monitor");
 		Thread.sleep(2000);
@@ -1566,9 +1637,28 @@ public class CreateCompany extends BaseClass {
 
 		// Login to Email account
 		CommonFunctions.fn_OpenURL(prop.getProperty("GMAILURL"));
-		Thread.sleep(2000);
-		CommonFunctions.fn_LoginToGmail(gmailPageObject, ExcelUtil.getCellData("Login Details", 2, 1),
-				ExcelUtil.getCellData("Login Details", 2, 2));
+		Thread.sleep(3000);
+		
+		
+		  if(driver.getTitle().contains("Free Storage and Email from Google")) {
+		  gmailPageObject.signIn.click(); Thread.sleep(3000); }
+		  
+		  
+		  Thread.sleep(2000); CommonFunctions.fn_LoginToGmail(gmailPageObject,
+		  ExcelUtil.getCellData("Login Details", 2, 1),
+		  ExcelUtil.getCellData("Login Details", 2, 2)); Thread.sleep(3000);
+		 
+		
+		// Navigate to test staging account
+		/*
+		 * gmailPageObject.userImage.click(); Thread.sleep(2000);
+		 * for(int i=0; i<gmailPageObject.accounts.size(); i++) {
+		 * if(gmailPageObject.accounts.get(i).getText().contains(ExcelUtil.
+		 * getCellData("Login Details", 2, 3))){
+		 * gmailPageObject.accounts.get(i).click(); Thread.sleep(5000); } }
+		 * 
+		 * CommonFunctions.fn_SwitchToNewWindow(); Thread.sleep(2000);
+		 */
 
 		// Get the number of windows before clicking on Get Started
 		final int windowsBefore = driver.getWindowHandles().size();
@@ -1696,7 +1786,7 @@ public class CreateCompany extends BaseClass {
 		// Compare the count with expected
 		int totalCount = countInStream + countInAlerts + countInEscalations + countInResolutions
 				+ countIntrustedSourceTab;
-		int expectedCount = Integer.parseInt(ExcelUtil.getCellValueByColumnName("Social Monitor", "Count"));
+		int expectedCount = (int)(Double.parseDouble(ExcelUtil.getCellValueByColumnName("Social Monitor", "Count")));
 		if (totalCount == expectedCount) {
 			System.out.println("Count of posts is correct.");
 		} else {
@@ -1717,7 +1807,7 @@ public class CreateCompany extends BaseClass {
 
 		// Download report
 		driver.navigate().refresh();
-		Thread.sleep(3000);
+		Thread.sleep(60000);
 		// CommonFunctions.fn_FluentWaitTillTextIsPresent(compSocialMonitorPageObject.firstRowStatusCellEleme,
 		// "Download");
 		compSocialMonitorPageObject.firstRowStatusCellEleme = driver
@@ -1902,11 +1992,7 @@ public class CreateCompany extends BaseClass {
 
 		List<String> surveySentDates = ExcelUtil.getAllCellValuesByColumnName(surveyResultsFileName, "Sheet0", dirPath,
 				"Survey Sent Date");
-		System.out.println(surveySentDates);
-		System.out.println(surveySentDates.size());
 		surveySentDates.removeAll(Arrays.asList("", null));
-		System.out.println(surveySentDates);
-		System.out.println(surveySentDates.size());
 		for (int i = 0; i < surveySentDates.size(); i++) {
 			Date sentDate = null;
 			System.out.println("Entered for loop");
@@ -1947,6 +2033,7 @@ public class CreateCompany extends BaseClass {
 		int zillowReviewsCount = 0;
 		int thirdPartyReviewsCount = 0;
 		int fbReviewsCount = 0;
+		numberOfRows = surveySources.size();
 		for (int i = 0; i < surveySources.size(); i++) {
 			System.out.println(surveySources.get(i));
 
@@ -1972,62 +2059,43 @@ public class CreateCompany extends BaseClass {
 		}
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.dashBoardLink, "Dashboard", "Dashboard");
 		Thread.sleep(2000);
+		compAdminDashboardPageObject.transactionStatsTab.click();
+		Thread.sleep(3000);
 		compAdminDashboardPageObject.allTimeDropDown.click();
 		Thread.sleep(2000);
 		CommonFunctions.fn_WaitForAnElementToBeVisible(compAdminDashboardPageObject.allTimeDropDownOption);
 		Thread.sleep(2000);
 		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.allTimeDropDownOptions, "Last Year");
 		Thread.sleep(3000);
+		
 		String reviewsCount = (compAdminDashboardPageObject.reviewsCount.getText().split(" "))[0];
 		int reviewCount = Integer.parseInt(reviewsCount);
-		if (numberOfRows == reviewCount) {
-			System.out.println("Total count of reviews is correct.");
-		} else {
-			Assert.fail("Total count of review is incorrect. Excel: " + numberOfRows + " and UI: " + reviewCount);
-		}
+		softAssert.assertEquals(numberOfRows, reviewCount, "Total count of review is incorrect. Excel: " + numberOfRows +
+				  " and UI: " + reviewCount);
+		 
 
 		int ssReviewCountInUI = Integer.parseInt((reportingPageObject.completedCount.getText().split(" "))[0]);
-		if (ssReviewsCount == ssReviewCountInUI) {
-			System.out.println("Total count ss of reviews is correct.");
-		} else {
-
-			Assert.fail("Total count of ss reviews is incorrect. Excel: " + ssReviewsCount + " and UI: "
-					+ ssReviewCountInUI);
-		}
+		softAssert.assertEquals(ssReviewsCount, ssReviewCountInUI, "Total count ss of reviews is correct.");
 
 		int googleReviewsCountInUI = Integer.parseInt(reportingPageObject.googleReviewsCount.getText());
-		if (googleReviewsCount == googleReviewsCountInUI) {
-			System.out.println("Total count of google reviews is correct.");
-		} else {
-			Assert.fail("Total count of google reviews is incorrect. Excel: " + googleReviewsCount + " and UI: "
-					+ googleReviewsCountInUI);
-		}
-
+		softAssert.assertEquals(googleReviewsCount, googleReviewsCountInUI, "\"Total count of google reviews is incorrect. Excel: \" + googleReviewsCount + \" and UI: \"\r\n" + 
+				"					+ googleReviewsCountInUI");
+	
 		int zillowReviewsCountInUI = Integer.parseInt(reportingPageObject.zillowReviewsCount.getText());
-		if (zillowReviewsCount == zillowReviewsCountInUI) {
-			System.out.println("Total count of zillow reviews is correct.");
-		} else {
-			Assert.fail("Total count of zillow reviews is incorrect. Excel: " + zillowReviewsCount + " and UI: "
-					+ zillowReviewsCountInUI);
-		}
+		softAssert.assertEquals(zillowReviewsCount, zillowReviewsCountInUI, "Total count of zillow reviews is incorrect. Excel: " + zillowReviewsCount + " and UI: "
+				+ zillowReviewsCountInUI);
 
 		int thirdPartyReviewsCountInUI = Integer.parseInt(reportingPageObject.thirdPartyReviewsCount.getText());
-		if (thirdPartyReviewsCount == thirdPartyReviewsCountInUI) {
-			System.out.println("Total count of third party reviews is correct.");
-		} else {
-			Assert.fail("Total count of third party reviews is incorrect. Excel: " + thirdPartyReviewsCount
-					+ " and UI: " + thirdPartyReviewsCountInUI);
-		}
+		softAssert.assertEquals(thirdPartyReviewsCount, thirdPartyReviewsCountInUI, "Total count of third party reviews is incorrect. Excel: " + thirdPartyReviewsCount
+				+ " and UI: " + thirdPartyReviewsCountInUI);
 
 		int fbReviewsCountInUI = Integer.parseInt(reportingPageObject.facebookReviewsCount.getText());
-		if (fbReviewsCount == fbReviewsCountInUI) {
-			System.out.println("Total count of fb reviews is correct.");
-		} else {
-			Assert.fail("Total count of fb reviews is incorrect. Excel: " + fbReviewsCount + " and UI: "
-					+ fbReviewsCountInUI);
-		}
+		softAssert.assertEquals(fbReviewsCount, fbReviewsCountInUI, "Total count of fb reviews is incorrect. Excel: " + fbReviewsCount + " and UI: "
+				+ fbReviewsCountInUI);
 
 		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		
+		softAssert.assertAll();
 	}
 
 	@Given("^Login to existing company admin for public pages verification$")
@@ -2225,6 +2293,7 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(4000);
 		String parentWindow3 = driver.getWindowHandle();
 		CommonFunctions.fn_SwitchToNewWindow();
+		Thread.sleep(2000);
 		Verify.verify(true, "Page title is not correct", driver.getTitle(), "Mortgage Reviews");
 		Assert.assertTrue(compPublicPageObject.publicPageURL.isDisplayed(),
 				"Public page URL is not displayed although the hide public page is uncheked");
@@ -2527,6 +2596,8 @@ public class CreateCompany extends BaseClass {
 		hideWriteReviewButtonValue = CommonFunctions
 				.getCheckBoxValue(javaScriptWidgetPageObject.hideWriteReviewButtonCheckBox);
 		allowModestRatingValue = CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.allowModestRatingCheckBox);
+		
+		System.out.println(hideBarGraphValue+hideOptionsValue+hideContactBtnValue+hideWriteReviewButtonValue+allowModestRatingValue);
 
 		// Values to enter
 		buttonOneOpacityToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
@@ -2557,7 +2628,10 @@ public class CreateCompany extends BaseClass {
 				"Hide Write Review Button");
 		allowModestRatingValueToEnter = ExcelUtil.getCellValueByColumnName("Values To Enter in JavaScript",
 				"Allow Modest Branding");
-
+		
+		System.out.println(hideBarGraphValueToEnter+hideOptionsValueToEnter+hideContactBtnValueToEnter+hideWriteReviewButtonValueToEnter+allowModestRatingValueToEnter);
+		
+		
 		// Enter the values in fields
 		Thread.sleep(2000);
 		javaScriptWidgetPageObject.buttonOneOpacity.clear();
@@ -2706,8 +2780,8 @@ public class CreateCompany extends BaseClass {
 		// Select the Office admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
 		Thread.sleep(3000);
@@ -2925,8 +2999,8 @@ public class CreateCompany extends BaseClass {
 		// Select the Office admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
 		Thread.sleep(3000);
@@ -2975,8 +3049,8 @@ public class CreateCompany extends BaseClass {
 		// Select the comp admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
 		Thread.sleep(3000);
@@ -3066,13 +3140,14 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(2000);
 		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
 				"Javascript Widget");
+		Thread.sleep(2000);
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
 
 		// Select the Office admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
 		Thread.sleep(3000);
@@ -3172,8 +3247,8 @@ public class CreateCompany extends BaseClass {
 		// Select the comp admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
 		Thread.sleep(3000);
@@ -3328,13 +3403,14 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(2000);
 		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
 				"Javascript Widget");
+		Thread.sleep(2000);
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
 
 		// Select the company admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
 		Thread.sleep(3000);
@@ -3435,8 +3511,8 @@ public class CreateCompany extends BaseClass {
 		// Select the region admin in dashboard selection dropdown
 		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
 		Thread.sleep(2000);
@@ -3503,8 +3579,8 @@ public class CreateCompany extends BaseClass {
 		// Select the Office admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(5000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
 		Thread.sleep(3000);
@@ -3571,8 +3647,8 @@ public class CreateCompany extends BaseClass {
 		// Select the comp admin in dashboard selection dropdown
 		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(4000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
 		Thread.sleep(3000);
@@ -4074,7 +4150,7 @@ public class CreateCompany extends BaseClass {
 		// Navigate to Reporting page
 		Thread.sleep(2000);
 		compAdminDashboardPageObject.dashBoardLink.click();
-		Thread.sleep(2000);
+		Thread.sleep(4000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.reportingLink, "Reporting", "Reporting");
 		Thread.sleep(2000);
 		Verify.verify(reportingPageObject.reportSelectDropDown.isDisplayed());
@@ -4098,7 +4174,7 @@ public class CreateCompany extends BaseClass {
 
 		File companyUserReportFile = CommonFunctions.fn_GetLatestFilefromDir(dirPath);
 		String companyUserReportFileName = companyUserReportFile.getName();
-		System.out.println(surveyResultsFileName);
+		System.out.println(companyUserReportFileName);
 
 		int numberOfRowsInCompUserReport = ExcelUtil.getNumberOfRows(companyUserReportFileName, "Sheet0", dirPath) - 1;
 
@@ -4480,11 +4556,540 @@ public class CreateCompany extends BaseClass {
 
 		softAssert.assertAll();
 	}
+	
+	@Given("^Login to existing company for verifying quick edits$")
+    public void login_to_existing_company_for_verifying_quick_edits() throws Throwable {
+		
+		// Login to the SS Admin
+		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
+				ExcelUtil.getCellData("Login Details", 1, 2));
+		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 10, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+		
+		// Navigate to manage team and edit the user
+		regionName = ExcelUtil.getCellValueByColumnName("Quick Edits", "Region");		
+		branchName = ExcelUtil.getCellValueByColumnName("Quick Edits", "Existing Branch");
+		agentName = ExcelUtil.getCellValueByColumnName("Quick Edits", "Existing Agent");
+		System.out.println(regionName+branchName+		agentName);
+		editOrLoginAsAgent(regionName, branchName, agentName, "Edit");
+		
+		softAssert.assertEquals(CommonFunctions.isElementPresent(By.xpath("//div[@id='v-ed-hide-pp-chk-box']")), true, 
+				"Hide public page checkbox is not present although logged into comp from ss admin");
+		
+		// Logout 
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		
+		// Login directly to comp admin
+		CommonFunctions.fn_LoginAsCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 10, 1), ExcelUtil.getCellData("Login Details", 10, 2));
+		
+		//Edit the agent
+		editOrLoginAsAgent(regionName, branchName, agentName, "Edit");
+		
+		softAssert.assertEquals(CommonFunctions.isElementPresent(By.xpath("//div[@id='v-ed-hide-pp-chk-box']")), false, 
+				"Hide public page checkbox is not present although logged into comp from ss admin");
+		
+		// Logout
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		
+    }
+
+    @When("^Created a new agent and update the logo$")
+    public void created_a_new_agent_and_update_the_logo() throws Throwable {
+        		
+		// Login
+		// Login directly to comp admin
+		CommonFunctions.fn_LoginAsCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 10, 1), ExcelUtil.getCellData("Login Details", 10, 2));
+		
+    	
+    	// Navigate to Manage Team
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "User Management", "User Management");
+		Thread.sleep(3000);
+    	
+    	// Create a new agent
+    	// Navigate to add team members
+    	manageTeamPageObject.addTeamMembersButton.click();
+    	Thread.sleep(2000);
+    	
+    	// Enter all the fields to create User to Office
+		addTeamMembersPageObject.individualTab.click();
+		CommonFunctions.fn_WaitForAnElementToBeVisible(addTeamMembersPageObject.assignToDropDownInput);
+		Thread.sleep(2000);
+		addTeamMembersPageObject.assignToDropDownInput.click();
+		CommonFunctions.fn_WaitForAnElementToBeVisible(addTeamMembersPageObject.assignToDropDownList);
+		CommonFunctions.fn_ClickOnItemInDropDown(addTeamMembersPageObject.assignToDropDownListItems,
+				"Office");
+		Thread.sleep(2000);
+		addTeamMembersPageObject.selectOfficeDropDownInput.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(addTeamMembersPageObject.selectOfficeListItems,
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Existing Branch"));
+		Thread.sleep(2000);
+		addTeamMembersPageObject.addUserDropDownInput.clear();
+		Thread.sleep(2000);
+		
+		// Run instance creation
+		runInstance = (int) CommonFunctions.fn_GenerateRandomNumber(System.currentTimeMillis());
+		String[] userForComp = ExcelUtil.getCellValueByColumnName("Quick Edits", "User For Office").split("@");
+		userForCompany = userForComp[0] + "+" + runInstance + "@" + userForComp[1];
+		
+		
+		// Email
+		agentName = userForComp[0] + "+" + runInstance ;
+		addTeamMembersPageObject.addUserDropDownInput.sendKeys(userForCompany);
+		Thread.sleep(2000);
+		addTeamMembersPageObject.saveButton.click();
+		Thread.sleep(2000);	
+		
+		// Change the profile image and comp logo
+		editOrLoginAsAgent(regionName, branchName, agentName, "Edit");
+		Thread.sleep(4000);
+		quickEditPageObject.editButton.click();
+		Thread.sleep(4000);
+		quickEditPageObject.profileImageEditIcon.click();
+		Thread.sleep(4000);
+		Runtime.getRuntime().exec(resourcesPath+"\\ProfileImageUpload.exe");
+		Thread.sleep(5000);
+		quickEditPageObject.uploadButton.click();
+		Thread.sleep(5000);
+		quickEditPageObject.companyLogoEditIcon.click();
+		Thread.sleep(2000);
+		Runtime.getRuntime().exec(resourcesPath+"\\CompanyLogoUpload.exe");
+		Thread.sleep(5000);
+		quickEditPageObject.saveButton.click();
+		Thread.sleep(2000);
+		String profileImage = quickEditPageObject.profileImage.getAttribute("src");
+		String logoImage = quickEditPageObject.profileImage.getAttribute("src");
+		
+		// Login to the agent
+		compAdminDashboardPageObject.dashBoardLink.click();
+		Thread.sleep(4000);
+		editOrLoginAsAgent(regionName, branchName, agentName, "Login");
+		Thread.sleep(4000);
+		agentDashboardPageObject.editProfileLink.click();
+		Thread.sleep(3000);
+		//softAssert.assertEquals(agentProfilePageObject.profileImage1.getAttribute("src"), profileImage, "Profile image is not updated correctly");
+		//softAssert.assertEquals(agentProfilePageObject.companyLogo.getAttribute("src"), logoImage, "Profile image is not updated correctly");
+		
+		// Switch back  to admin
+		agentDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		agentDashboardPageObject.switchToAdminItem.click();
+		Thread.sleep(2000);
+		
+		// Logout
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		
+		// Login to the SS Admin
+		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
+				ExcelUtil.getCellData("Login Details", 1, 2));
+		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 10, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+		
+		// Navigate to settings to enable 'Allow partner survey'
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.configureLink, "Edit Settings", "Edit Settings");
+		
+		if(compAdminSettingsPageObject.allowPartnerSurveyCheckBoxValue.getAttribute("value").equalsIgnoreCase("false")) {
+			compAdminSettingsPageObject.allowPartnerSurveyCheckBox.click();
+			Thread.sleep(2000);
+		}
+		
+		// Navigate to manage team and edit the user to check the hide public page
+		editOrLoginAsAgent(regionName, branchName, agentName, "Edit");
+		quickEditPageObject.editButton.click();
+		Thread.sleep(2000);
+		
+		if(CommonFunctions.isElementPresent(By.xpath("//input[@id='at-pst-cb']/preceding-sibling::div"))){
+			softAssert.assertEquals(quickEditPageObject.allowPartnerSurveyCheckBoxValue.getAttribute("value"), "true", "Allow partner survey is not checked");
+		}
+		
+		if(quickEditPageObject.hidePublicPageCheckBoxValue.getAttribute("value").equalsIgnoreCase("false")) {
+			quickEditPageObject.hidePublicPageCheckBox.click();
+			Thread.sleep(2000);
+		}
+		
+		publicPageURL = "http://"+quickEditPageObject.baseURL.getText()+quickEditPageObject.profileURLInputTextBox.getAttribute("value");
+		System.out.println(publicPageURL);
+		quickEditPageObject.saveButton.click();
+		Thread.sleep(3000);
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		
+		
+		// Navigate to public page and verify if it shows 404 error
+		//driver.navigate().to(publicPageURL);
+		CommonFunctions.fn_OpenURL(publicPageURL);
+		Thread.sleep(2000);
+		softAssert.assertEquals(CommonFunctions.isElementPresent(By.xpath("//div[@class='ss-404-not-found-txt']")), true, "Faield: Public page is loaded although hide public page is enabled.");
+		
+		// Navigate back to application
+		//driver.navigate().back();
+		// Login to the SS Admin
+		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
+				ExcelUtil.getCellData("Login Details", 1, 2));
+		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 10, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+		
+		// Edit to disable the hide public page
+		editOrLoginAsAgent(regionName, branchName, agentName, "Edit");
+		quickEditPageObject.editButton.click();
+		Thread.sleep(2000);
+		if(quickEditPageObject.hidePublicPageCheckBoxValue.getAttribute("value").equalsIgnoreCase("true")) {
+			quickEditPageObject.hidePublicPageCheckBox.click();
+			Thread.sleep(2000);
+		}
+		quickEditPageObject.saveButton.click();
+		Thread.sleep(2000);
+		
+		// Logout
+		CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+		
+		// Navigate to public page and verify if it shows 404 error
+		CommonFunctions.fn_OpenURL(publicPageURL);
+		softAssert.assertEquals(CommonFunctions.isElementPresent(By.xpath("//div[@class='ss-404-not-found-txt']")), false, "Faield: Public page is not loaded although hide public page is disabled.");
+		
+    }
+
+    @Then("^Details should be updated in agent login$")
+    public void details_should_be_updated_in_agent_login() throws Throwable {
+    	
+    	// Navigate back to application
+		// Login to the SS Admin
+		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
+				ExcelUtil.getCellData("Login Details", 1, 2));
+		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 10, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+		
+		
+		//  Edit
+		editOrLoginAsAgent(regionName, branchName, agentName, "Edit");
+		Thread.sleep(2000);
+		
+		// Edit and enter all the details
+		quickEditPageObject.editButton.click();
+		Thread.sleep(2000);
+		quickEditPageObject.firstName.clear();
+		quickEditPageObject.firstName.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "First Name"));
+		Thread.sleep(2000);
+		quickEditPageObject.lastName.clear();
+		quickEditPageObject.lastName.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Last Name"));
+		Thread.sleep(2000);
+		quickEditPageObject.email.clear();
+		quickEditPageObject.email.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Email"));
+		Thread.sleep(2000);
+		quickEditPageObject.title.clear();
+		quickEditPageObject.title.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Title"));
+		Thread.sleep(2000);
+		quickEditPageObject.address1.clear();
+		quickEditPageObject.address1.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Address1"));
+		Thread.sleep(2000);
+		quickEditPageObject.address2.clear();
+		quickEditPageObject.address2.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Address2"));
+		Thread.sleep(2000);
+		String agentCountry = ExcelUtil.getCellValueByColumnName("Quick Edits", "Country");
+		if (!(agentCountry.equalsIgnoreCase(quickEditPageObject.country.getAttribute("value")))) {
+			quickEditPageObject.country.clear();
+			quickEditPageObject.country.sendKeys(agentCountry);
+			Thread.sleep(2000);
+			CommonFunctions.fn_ClickOnItemInDropDown(quickEditPageObject.countryListItems, agentCountry);
+			Thread.sleep(2000);
+		}
+		CommonFunctions.fn_SelectByVisibleText(quickEditPageObject.state, ExcelUtil.getCellValueByColumnName("Quick Edits", "State"));
+		String agentCity = ExcelUtil.getCellValueByColumnName("Quick Edits", "City");
+		if (!(agentCity.equalsIgnoreCase(quickEditPageObject.city.getAttribute("value")))) {
+			quickEditPageObject.city.clear();
+			quickEditPageObject.city.sendKeys(agentCity);
+			Thread.sleep(2000);
+			CommonFunctions.fn_ClickOnItemInDropDown(quickEditPageObject.countryListItems, agentCity);
+			Thread.sleep(2000);
+		}
+		quickEditPageObject.zipCode.clear();
+		quickEditPageObject.zipCode.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Zip"));
+		Thread.sleep(2000);
+		quickEditPageObject.phone.clear();
+		quickEditPageObject.phone.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Phone"));
+		Thread.sleep(2000);
+		quickEditPageObject.website.clear();
+		quickEditPageObject.website.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Website"));
+		Thread.sleep(2000);
+		quickEditPageObject.aboutMe.clear();
+		quickEditPageObject.aboutMe.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "About Me"));
+		Thread.sleep(2000);
+		quickEditPageObject.disclaimer.clear();
+		quickEditPageObject.disclaimer.sendKeys(ExcelUtil.getCellValueByColumnName("Quick Edits", "Disclaimer"));
+		Thread.sleep(2000);
+		quickEditPageObject.minimumScoreToAutoPost.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(quickEditPageObject.minimumScoreToAutoPostItems, ExcelUtil.getCellValueByColumnName("Quick Edits", "Minimum Score To Post"));
+		Thread.sleep(2000);
+		if (quickEditPageObject.autoPostEnabledCheckBoxValue.getAttribute("value")
+				.equalsIgnoreCase("true")) {
+			quickEditPageObject.autoPostEnabledCheckBox.click();
+			Thread.sleep(2000);
+		} else {
+			System.out.println("It is already unchecked and the value is false");
+		}
+		
+		if (quickEditPageObject.hidePublicPageCheckBoxValue.getAttribute("value")
+				.equalsIgnoreCase("false")) {
+			quickEditPageObject.hidePublicPageCheckBox.click();
+			Thread.sleep(2000);
+		} else {
+			System.out.println("It is already checked and the value is true");
+		}
+		
+		if (quickEditPageObject.replyToReviewsCheckBoxValue.getAttribute("value")
+				.equalsIgnoreCase("false")) {
+			quickEditPageObject.replyToReviewsCheckBox.click();
+			Thread.sleep(2000);
+		} else {
+			System.out.println("It is already checked and the value is true");
+		}
+		
+		if (quickEditPageObject.adminPrivilegesCheckBoxValue.getAttribute("value")
+				.equalsIgnoreCase("false")) {
+			quickEditPageObject.adminPrivilegesCheckBox.click();
+			Thread.sleep(2000);
+		} else {
+			System.out.println("It is already checked and the value is true");
+		}
+		
+		Thread.sleep(2000);
+		quickEditPageObject.minimumScoreToReply.click();
+		Thread.sleep(2000);
+		CommonFunctions.fn_ClickOnItemInDropDown(quickEditPageObject.minimumScoreToReplyItems, ExcelUtil.getCellValueByColumnName("Quick Edits", "Minimum Score To Reply"));
+		Thread.sleep(2000);
+		
+		quickEditPageObject.saveButton.click();
+		Thread.sleep(2000);
+		compAdminDashboardPageObject.dashBoardLink.click();
+		Thread.sleep(4000);
+		
+		// Login to agent
+		agentName = ExcelUtil.getCellValueByColumnName("Quick Edits", "First Name")+" "+ExcelUtil.getCellValueByColumnName("Quick Edits", "Last Name");
+		editOrLoginAsAgent(regionName, branchName, agentName, "Login");
+		
+		// Navigate to Edit profile and verify the values
+		agentDashboardPageObject.editProfileLink.click();
+		Thread.sleep(2000);
+		softAssert.assertEquals(agentProfilePageObject.profileName.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "First Name")+" "+ExcelUtil.getCellValueByColumnName("Quick Edits", "Last Name"),
+				"Profile name is incorrect.");
+		softAssert.assertEquals(agentProfilePageObject.title.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Title"),
+				"Title is incorrect");
+		agentProfilePageObject.addressContainer.click();
+		Thread.sleep(3000);
+		softAssert.assertEquals(agentProfilePageObject.address1.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Address1"),
+				"Address1 is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.address2.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Address2"),
+				"Address2 is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.country.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Country"),
+				"Country is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.state.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "State"),
+				"State is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.city.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "City"),
+				"City is incorrect");
+		softAssert.assertEquals((int)Double.parseDouble(agentProfilePageObject.zipCode.getAttribute("value")), 
+				(int)Double.parseDouble(ExcelUtil.getCellValueByColumnName("Quick Edits", "Zip")),
+				"Zip is incorrect");
+		agentProfilePageObject.cancelButton.click();
+		Thread.sleep(3000);
+		softAssert.assertEquals(agentProfilePageObject.publicPageURL.getText(), 
+				publicPageURL,
+				"Public page URL is incorrect");
+		
+		softAssert.assertEquals(agentProfilePageObject.website.getAttribute("value"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Website"),
+				"Website is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.phone.getAttribute("title"), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Phone"),
+				"Phone is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.aboutMe.getText(), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "About Me"),
+				"About me is incorrect");
+		softAssert.assertEquals(agentProfilePageObject.disclaimer.getText(), 
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Disclaimer"),
+				"Disclaimer is incorrect");
+		
+		// Navigate to Settings to verify
+		agentDashboardPageObject.configureLink.click();
+		Thread.sleep(3000);
+		softAssert.assertEquals(agentConfigurePageObject.minScoreToPost.getAttribute("value"),
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Minimum Score To Post"), 
+				"Minimum score to post is incorrect");
+		softAssert.assertEquals(agentConfigurePageObject.autoPostCheckBoxValue.getAttribute("value"),
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Auto Post"), 
+				"Auto post check box value is incorrect");
+		softAssert.assertEquals(agentConfigurePageObject.replyToReviewsCheckBoxValue.getAttribute("value"),
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Reply To Reviews"), 
+				"Reply to reviews check box value is incorrect");
+		softAssert.assertEquals(agentConfigurePageObject.minScoreToReply.getAttribute("value"),
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Minimum Score To Reply"), 
+				"Minimum score to reply is incorrect");
+		softAssert.assertEquals(agentConfigurePageObject.hidePublicPageCheckBoxValue.getAttribute("value"),
+				ExcelUtil.getCellValueByColumnName("Quick Edits", "Hide Public Page"), 
+				"Hide Public Page check box value is incorrect");
+		
+		// Switch to admin
+		agentDashboardPageObject.userImage.click();
+		Thread.sleep(3000);
+		agentDashboardPageObject.switchToAdminItem.click();
+		Thread.sleep(3000);
+		
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 10, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+
+		
+		// Delete the agent
+		editOrLoginAsAgent(regionName, branchName, agentName, "Delete");
+		
+		if(viewHierarchyPageObject.popupHeader.getText().contains("Delete User")) {
+			viewHierarchyPageObject.deleteButton.click();
+			Thread.sleep(2000);
+		}
+		
+		softAssert.assertEquals(viewHierarchyPageObject.successMessage.getText(), "User has been deleted successfully", "User is not deleted");
+
+		// Logout 
+		agentDashboardPageObject.userImage.click();
+		Thread.sleep(2000);
+		agentDashboardPageObject.logoutItem.click();
+		Thread.sleep(2000);
+				
+		softAssert.assertAll();		
+    }
+
+    private void editOrLoginAsAgent(String regionName, String branchName, String agentName, String action) throws InterruptedException {
+    	
+    	// Navigate to Manage Team - View Hierarchy
+		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "User Management", "User Management");
+		Thread.sleep(3000);
+		manageTeamPageObject.viewHierarchyButton.click();
+		Thread.sleep(2000);
+		
+		// Click on region
+		for(int i=0; i<viewHierarchyPageObject.regionNames.size(); i++ ) {
+			if(viewHierarchyPageObject.regionNames.get(i).getText().toLowerCase().contains(regionName.toLowerCase())) {
+				viewHierarchyPageObject.regionRightArrows.get(i).click();
+				Thread.sleep(2000);
+			}
+		}
+		 
+		// Click on branch
+		for(int i=0; i<viewHierarchyPageObject.branchNames.size(); i++ ) {
+			if(viewHierarchyPageObject.branchNames.get(i).getText().toLowerCase().contains(branchName.toLowerCase())) {
+				viewHierarchyPageObject.branchRightArrows.get(i).click();
+				Thread.sleep(2000);
+			}
+		}
+		
+		// Click on the edit icon for the user
+		for(int i=0; i<viewHierarchyPageObject.agentNames.size(); i++ ) {
+			if(viewHierarchyPageObject.agentNames.get(i).getText().toLowerCase().contains(agentName.toLowerCase())) {
+				if(action.contains("Edit")) {
+					viewHierarchyPageObject.agentQuickEditButtons.get(i).click();
+					Thread.sleep(2000);
+				}
+				if(action.contains("Login")) {
+					viewHierarchyPageObject.agentsLoginAs.get(i).click();
+					Thread.sleep(2000);
+				}
+				if(action.contains("Delete")) {
+					viewHierarchyPageObject.agentDeleteButtons.get(i).click();
+					Thread.sleep(2000);
+				}
+			}
+		}
+    }
 
 	@And("^Test$")
 	public void test() throws Exception {
 
-		
-		
 	}
 }

@@ -169,10 +169,9 @@ public class ExcelUtil {
 	                System.out.println(stringCellValue);
             }
             else {
-            	Double value = cell.getNumericCellValue();
-                Long longValue = value.longValue();
-                stringCellValue = new String(longValue.toString());
-            }
+            		Double value = cell.getNumericCellValue();
+            		stringCellValue = new String(value.toString()); 
+            }    
         }
         else if(cell.getCellType() == CellType.BOOLEAN)
         {

@@ -137,4 +137,10 @@ public class CompAdminSettingsPage {
 	@FindBy(xpath = "//div[@class='reg_btn'][text()='save']")
 	public WebElement facebookSaveButton;
 	
+	@FindBy(xpath = "//div[@id='alw-ptnr-srvy-chk-box']")
+	public WebElement allowPartnerSurveyCheckBox;
+	
+	@FindBy(xpath = "//input[@id='alw-ptnr-srvy-cb']")
+	public WebElement allowPartnerSurveyCheckBoxValue;
+	
 }

@@ -13,5 +13,26 @@ public class AgentConfigurePage {
 
 	@FindBy(xpath = "//input[@id='rating-min-post']")
 	public WebElement minScoreToPost;
+
+	@FindBy(xpath = "//div[@id='atpst-chk-box']")
+	public WebElement autoPostCheckBox;
+	
+	@FindBy(xpath = "//input[@name='autopost']")
+	public WebElement autoPostCheckBoxValue;
+	
+	@FindBy(xpath = "//input[@id='rating-min-reply']")
+	public WebElement minScoreToReply;
+	
+	@FindBy(xpath = "//div[@id='allow-reply-chk-box']")
+	public WebElement replyToReviewsCheckBox;
+	
+	@FindBy(xpath = "//input[@name='allowreply']")
+	public WebElement replyToReviewsCheckBoxValue;
+	
+	@FindBy(xpath = "//div[@id='hide-pp-chk-box']")
+	public WebElement hidePublicPageCheckBox;
+	
+	@FindBy(xpath = "//input[@id='hide-pp-cb']")
+	public WebElement hidePublicPageCheckBoxValue;
 	
 }

@@ -49,7 +49,7 @@
               <ul>
                 <li>
                   <a href="#" class="navigator-link " panel-name="test-xml-Default_suite">
-                    <span>C:\Users\savita\AppData\Local\Temp\testng-eclipse--367964695\testng-customsuite.xml</span>
+                    <span>C:\Users\savita\AppData\Local\Temp\testng-eclipse--1140808612\testng-customsuite.xml</span>
                   </a> <!-- navigator-link  -->
                 </li>
                 <li>
@@ -129,18 +129,16 @@
                   </a> <!-- feature(Create a company through the invitation email) -->
                   <span class="method-name">feature</span>
                   <span class="parameters">(Create a company through the invitation email)</span>
-                  <div class="stack-trace">cucumber.runtime.CucumberException: java.lang.AssertionError: The following asserts failed:
-	Count of rows in verified user report is not equal to the number of users on UI  expected [46] but found [17],
-	Count of rows in incomplete survey results report is not equal to the number of users on UI  expected [77] but found [72],
-	TRX_RCVD and processed count is not correct. expected [1] but found [2],
-	Completed count is not correct. expected [1] but found [0],
-	Completed percentage is not correct. expected [(100%)] but found [(0%)],
-	Incompleted count is not correct. expected [0] but found [2],
-	Incompleted percentage is not correct. expected [(0%)] but found [(100%)],
-	TRX_RCVD and processed count is not correct. expected [1] but found [5],
-	Completed count is not correct. expected [1] but found [5],
-	Completed percentage is not correct. expected [(100%)] but found [100],
-	Incompleted percentage is not correct. expected [(0%)] but found [0]
+                  <div class="stack-trace">cucumber.runtime.CucumberException: org.openqa.selenium.UnhandledAlertException: unexpected alert open: {Alert text : }
+  (Session info: chrome=74.0.3729.157)
+  (Driver info: chromedriver=74.0.3729.6 (255758eccf3d244491b8a1317aa76e1ce10d57e9-refs/branch-heads/3729@{#29}),platform=Windows NT 10.0.17134 x86_64) (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds: null
+Build info: version: &apos;3.11.0&apos;, revision: &apos;e59cfb3&apos;, time: &apos;2018-03-11T20:26:55.152Z&apos;
+System info: host: &apos;INFLAP117&apos;, ip: &apos;192.168.0.169&apos;, os.name: &apos;Windows 10&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;10.0&apos;, java.version: &apos;1.8.0_201&apos;
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 74.0.3729.6 (255758eccf3d24..., userDataDir: C:\Users\savita\AppData\Loc...}, cssSelectorsEnabled: true, databaseEnabled: false, goog:chromeOptions: {debuggerAddress: localhost:63567}, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, proxy: Proxy(), rotatable: false, setWindowRect: true, strictFileInteractability: false, takesHeapSnapshot: true, takesScreenshot: true, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unexpectedAlertBehaviour: ignore, unhandledPromptBehavior: ignore, version: 74.0.3729.157, webStorageEnabled: true}
+Session ID: ae960857aac5f45a8fb10a6f1e7c5091
+*** Element info: {Using=id, value=login-user-id}
 	at cucumber.api.testng.TestNGCucumberRunner.runCucumber(TestNGCucumberRunner.java:69)
 	at cucumber.api.testng.AbstractTestNGCucumberTests.feature(AbstractTestNGCucumberTests.java:21)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
@@ -168,21 +166,38 @@
 	at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:114)
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:251)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:77)
-Caused by: java.lang.AssertionError: The following asserts failed:
-	Count of rows in verified user report is not equal to the number of users on UI  expected [46] but found [17],
-	Count of rows in incomplete survey results report is not equal to the number of users on UI  expected [77] but found [72],
-	TRX_RCVD and processed count is not correct. expected [1] but found [2],
-	Completed count is not correct. expected [1] but found [0],
-	Completed percentage is not correct. expected [(100%)] but found [(0%)],
-	Incompleted count is not correct. expected [0] but found [2],
-	Incompleted percentage is not correct. expected [(0%)] but found [(100%)],
-	TRX_RCVD and processed count is not correct. expected [1] but found [5],
-	Completed count is not correct. expected [1] but found [5],
-	Completed percentage is not correct. expected [(100%)] but found [100],
-	Incompleted percentage is not correct. expected [(0%)] but found [0]
-	at org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:43)
-	at com.stepdefinitions.ss.CreateCompany.report_should_have_the_correct_value_with_that_of_ui(CreateCompany.java:4481)
-	at ✽.Then Report should have the correct value with that of UI(features/CreateCompany.feature:81)
+Caused by: org.openqa.selenium.UnhandledAlertException: unexpected alert open: {Alert text : }
+  (Session info: chrome=74.0.3729.157)
+  (Driver info: chromedriver=74.0.3729.6 (255758eccf3d244491b8a1317aa76e1ce10d57e9-refs/branch-heads/3729@{#29}),platform=Windows NT 10.0.17134 x86_64) (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 0 milliseconds: null
+Build info: version: &apos;3.11.0&apos;, revision: &apos;e59cfb3&apos;, time: &apos;2018-03-11T20:26:55.152Z&apos;
+System info: host: &apos;INFLAP117&apos;, ip: &apos;192.168.0.169&apos;, os.name: &apos;Windows 10&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;10.0&apos;, java.version: &apos;1.8.0_201&apos;
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 74.0.3729.6 (255758eccf3d24..., userDataDir: C:\Users\savita\AppData\Loc...}, cssSelectorsEnabled: true, databaseEnabled: false, goog:chromeOptions: {debuggerAddress: localhost:63567}, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, proxy: Proxy(), rotatable: false, setWindowRect: true, strictFileInteractability: false, takesHeapSnapshot: true, takesScreenshot: true, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unexpectedAlertBehaviour: ignore, unhandledPromptBehavior: ignore, version: 74.0.3729.157, webStorageEnabled: true}
+Session ID: ae960857aac5f45a8fb10a6f1e7c5091
+*** Element info: {Using=id, value=login-user-id}
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)
+	at org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:172)
+	at org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)
+	at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)
+	at org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:545)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:319)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElementById(RemoteWebDriver.java:365)
+	at org.openqa.selenium.By$ById.findElement(By.java:218)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:311)
+	at org.openqa.selenium.support.pagefactory.DefaultElementLocator.findElement(DefaultElementLocator.java:69)
+	at org.openqa.selenium.support.pagefactory.internal.LocatingElementHandler.invoke(LocatingElementHandler.java:38)
+	at com.sun.proxy.$Proxy21.sendKeys(Unknown Source)
+	at com.util.ss.CommonFunctions.fn_LoginAsSSorCompAdmin(CommonFunctions.java:55)
+	at com.stepdefinitions.ss.CreateCompany.review_should_be_displayed_under_reviews_section_in_dashboard(CreateCompany.java:969)
+	at ✽.Then Review should be displayed under reviews section in dashboard(features/CreateCompany.feature:22)
 
 </div> <!-- stack-trace -->
                   <em>
@@ -194,7 +209,7 @@ Caused by: java.lang.AssertionError: The following asserts failed:
         </div> <!-- panel Default_suite -->
         <div panel-name="test-xml-Default_suite" class="panel">
           <div class="main-panel-header rounded-window-top">
-            <span class="header-content">C:\Users\savita\AppData\Local\Temp\testng-eclipse--367964695\testng-customsuite.xml</span>
+            <span class="header-content">C:\Users\savita\AppData\Local\Temp\testng-eclipse--1140808612\testng-customsuite.xml</span>
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <pre>
@@ -255,12 +270,12 @@ data.addRows(1);
 data.setCell(0, 0, 0)
 data.setCell(0, 1, 'feature')
 data.setCell(0, 2, 'com.testrunner.ss.TestRunner')
-data.setCell(0, 3, 474198);
+data.setCell(0, 3, 392850);
 window.suiteTableData['Default_suite']= { tableData: data, tableDiv: 'times-div-Default_suite'}
 return data;
 }
               </script>
-              <span class="suite-total-time">Total running time: 7 minutes</span>
+              <span class="suite-total-time">Total running time: 6 minutes</span>
               <div id="times-div-Default_suite">
               </div> <!-- times-div-Default_suite -->
             </div> <!-- times-div -->
@@ -293,29 +308,27 @@ return data;
               </div> <!-- configuration-test before -->
               <div class="configuration-class before">
                 <span class="method-name">setUpClass</span>
-                <span class="method-start">17 ms</span>
+                <span class="method-start">15 ms</span>
               </div> <!-- configuration-class before -->
               <div class="configuration-class before">
                 <span class="method-name">setUp</span>
-                <span class="method-start">397 ms</span>
+                <span class="method-start">341 ms</span>
               </div> <!-- configuration-class before -->
               <div class="test-method">
                 <img src="failed.png">
                 </img>
                 <span class="method-name">feature(Create a company through the invitation email)</span>
-                <span class="method-start">9462 ms</span>
+                <span class="method-start">5194 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-method after">
+                <img src="failed.png">
+                </img>
                 <span class="method-name">takeScreenshot([TestResult name=feature status=FAILURE method=AbstractTestNGCucumberTests.feature(cucumber.api.test...)</span>
-                <span class="method-start">483667 ms</span>
+                <span class="method-start">398048 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-class after">
-                <span class="method-name">tearDown</span>
-                <span class="method-start">484364 ms</span>
-              </div> <!-- configuration-class after -->
-              <div class="configuration-class after">
                 <span class="method-name">tearDownClass</span>
-                <span class="method-start">485156 ms</span>
+                <span class="method-start">398061 ms</span>
               </div> <!-- configuration-class after -->
           </div> <!-- main-panel-content rounded-window-bottom -->
         </div> <!-- panel -->

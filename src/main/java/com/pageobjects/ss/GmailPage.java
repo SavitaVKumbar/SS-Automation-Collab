@@ -89,7 +89,7 @@ public class GmailPage {
 	@FindBy(xpath = "//div[@aria-label='Message Body']")
 	public WebElement messageBodyTextBox;
 	
-	@FindBy(xpath = "//span[@class='gb_ya gbii']")
+	@FindBy(xpath = "//span[@class='gb_xa gbii']")
 	public WebElement userImage;
 	
 	@FindBy(xpath = "//a[text()='Sign out']")
@@ -97,6 +97,12 @@ public class GmailPage {
 
 	@FindBy(xpath = "(//td/div/span[@class='im']/following-sibling::div[1])")
 	public List<WebElement> subjectContent;
+	
+	@FindBy(xpath = "//div[@class='gb_Ob']")
+	public List<WebElement> accounts ;
+	
+	@FindBy(xpath = "//li[@class='h-c-header__nav-li g-mail-nav-links']/a[contains(text(), 'Sign in')]")
+	public WebElement signIn;
 	
 }
 

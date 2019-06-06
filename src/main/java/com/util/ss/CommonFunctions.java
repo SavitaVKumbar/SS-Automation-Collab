@@ -126,7 +126,9 @@ public class CommonFunctions extends BaseClass {
 		wait.until(ExpectedConditions.textToBePresentInElement(elementToBeVerified, textToBePresent));
 	}
 	
-	public static void fn_SearchGmail(GmailPage gp, String subjectOfGmail) {
+	public static void fn_SearchGmail(GmailPage gp, String subjectOfGmail) throws InterruptedException {
+		
+		Thread.sleep(2000);
 
 		fn_WaitForAnElementToBeClickable(driver.findElement(By.xpath("//input[@aria-label = 'Search mail']")));
 		gp.searchInputField = driver.findElement(By.xpath("//input[@aria-label = 'Search mail']"));
@@ -192,7 +194,7 @@ public class CommonFunctions extends BaseClass {
 				System.out.println(gp.timeOfEmailElement.get(i).getAttribute("title"));
 				System.out.println(scriptStartTime);
 				String compareStatus = CommonFunctions.fn_CompareDateTime(gp.timeOfEmailElement.get(i).getAttribute("title"), scriptStartTime);
-				if(compareStatus.equalsIgnoreCase("Before")||compareStatus.equalsIgnoreCase("Equal")) {
+				if(compareStatus.equalsIgnoreCase("After")||compareStatus.equalsIgnoreCase("Equal")) {
 					Thread.sleep(3000);
 					fn_ClickOnElementUsingActions(gp.spanSubject.get(i));					
 					System.out.println("Clicked on the email");
@@ -640,10 +642,10 @@ public class CommonFunctions extends BaseClass {
 	}
 	
 	public static String getCheckBoxValue(WebElement element) {
-		if(!(element.getAttribute("class").contains("checked"))) 
-			return "Checked";
-		else
+		if(element.getAttribute("class").contains("checked")) 
 			return "Unchecked";
+		else
+			return "Checked";
 	}
 	
 	public static void checkCheckBox(WebElement element, String checkBoxValue) {

@@ -17,5 +17,6 @@ public class AgentPublicPage {
 	@FindBy(xpath = "//span[@title='Report Abuse']")
 	public WebElement reportAbuseIcon;
 	
-	
+	@FindBy(xpath = "//div[@class='ss-404-not-found-txt']")
+	public WebElement error404;
 }
