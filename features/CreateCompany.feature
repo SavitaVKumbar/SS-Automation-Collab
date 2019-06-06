@@ -37,7 +37,7 @@ Scenario: Verify that review is moved to different tabs after performing the act
 Given Login to existing company admin
 When SS Admin performs actions on the reviews in Social Monitor
 Then Review is moved to resolutions
-And Emails should be received and user should be able to reply
+#And Emails should be received and user should be able to reply
 And Company admin should be able to see the reviews in social monitor
 
 @RegressionTest5
@@ -85,14 +85,3 @@ Scenario: Verify for the quick edits
 Given Login to existing company for verifying quick edits
 When Created a new agent and update the logo
 Then Details should be updated in agent login
-
-@NewTest1
-Scenario: Test1
-And Test
-When User submits the survey from the email sent
-Then Review should be displayed under reviews section in dashboard
-And Review should also be displayed in Edit profile page
-And Review should also be displayed in Public page
-And Survey completed email should be delivered
-#And Review should be auto posted in linked in
-And Review should be auto posted in twitter
