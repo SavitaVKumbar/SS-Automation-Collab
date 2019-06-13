@@ -43,7 +43,7 @@ public class EditProfilePage {
 	@FindBy(xpath = "//div[@id = 'rating-avg-comp']")
 	public WebElement averageRatingComponent;
 
-	@FindBy(xpath = "//div[@id = 'dashboard-sel']")
+	@FindBy(xpath = "//div[@id='da-dd-wrapper']/div[2]")
 	public WebElement dashboardSelectionDropDown;
 	
 	@FindBy(xpath = "//div[@id = 'da-dd-wrapper-profiles']")

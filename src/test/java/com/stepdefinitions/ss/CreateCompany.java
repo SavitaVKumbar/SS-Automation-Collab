@@ -1,36 +1,31 @@
 package com.stepdefinitions.ss;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import org.apache.tools.ant.types.CommandlineJava.SysProperties;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 import com.base.ss.BaseClass;
 import com.google.common.base.Verify;
+import com.mysql.cj.exceptions.RSAException;
 import com.pageobjects.ss.AbuseReportsPage;
 import com.pageobjects.ss.AddTeamMembersPage;
 import com.pageobjects.ss.AgentAppsPage;
@@ -150,6 +145,10 @@ public class CreateCompany extends BaseClass {
 	String reviewTextToEnterFinal;
 	String currentDir = System.getProperty("user.dir");
 	String resourcesPath = currentDir + "//resources";
+	Connection connection;
+	Statement statement;
+	String query;
+	ResultSet resultSet;
 
 	@Given("^Login as Social Survey Admin$")
 	public void login_as_social_survey_admin() throws Throwable {
@@ -1661,7 +1660,7 @@ public class CreateCompany extends BaseClass {
 		 */
 
 		// Get the number of windows before clicking on Get Started
-		final int windowsBefore = driver.getWindowHandles().size();
+		//final int windowsBefore = driver.getWindowHandles().size();
 
 		// Search and click on email
 		CommonFunctions.fn_SearchAndClickOnGmail(gmailPageObject, "You got a reply on your review on SocialSurvey.",
@@ -1982,7 +1981,6 @@ public class CreateCompany extends BaseClass {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Then("^Date ranges should not be less than start date and greater than end date$")
 	public void date_ranges_should_not_be_less_than_start_date_and_greater_than_end_date() throws Throwable {
 
@@ -2565,19 +2563,21 @@ public class CreateCompany extends BaseClass {
 		// Navigate to JavaScript Widget
 		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.configureLink);
 		CommonFunctions.fn_MouseHover(compAdminDashboardPageObject.configureLink);
-		Thread.sleep(2000);
+		Thread.sleep(3000);
 		CommonFunctions.fn_ClickOnItemInDropDown(compAdminDashboardPageObject.configureDropdownListItems,
 				"Javascript Widget");
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
 
 		// Select the company admin in dashboard selection dropdown
-		Thread.sleep(2000);
+		Thread.sleep(3000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		Thread.sleep(4000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
 		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(2000);
+		Thread.sleep(5000);
 
 		// Get the default values in strings
 		buttonOneOpacity = javaScriptWidgetPageObject.buttonOneOpacity.getAttribute("value");
@@ -2728,13 +2728,15 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the region admin in dashboard selection dropdown
-		Thread.sleep(2000);
+		Thread.sleep(5000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(3000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		Thread.sleep(4000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
-		Thread.sleep(2000);
+		Thread.sleep(5000);
 
 		System.out.println("Value of filter check box "
 				+ CommonFunctions.getCheckBoxValue(javaScriptWidgetPageObject.filterSocialSurveyCheckBox));
@@ -2781,13 +2783,16 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(5000);
 
 		// Verify for the values
 		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacityToEnter,
@@ -2831,13 +2836,17 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(1000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		Thread.sleep(4000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
+		
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(5000);
 
 		// Navigate to Manage Team
 		Thread.sleep(2000);
@@ -2933,12 +2942,14 @@ public class CreateCompany extends BaseClass {
 
 		// Select the region admin in dashboard selection dropdown
 		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
-		Thread.sleep(2000);
-		CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		Thread.sleep(4000);
+		//CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
-		Thread.sleep(2000);
+		Thread.sleep(5000);
 
 		// Reset it to default values
 		javaScriptWidgetPageObject.resetConfigButton.click();
@@ -3000,13 +3011,16 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(5000);
 
 		// Verify for the values
 		Verify.verify(true, "Button one opacity value is not correct.", buttonOneOpacity,
@@ -3050,13 +3064,16 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(5000);
 
 		// Navigate to Manage Team
 		Thread.sleep(2000);
@@ -3147,13 +3164,15 @@ public class CreateCompany extends BaseClass {
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
 
 		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);Thread.sleep(5000);
 
 		// Enter the values in fields
 		Thread.sleep(2000);
@@ -3248,15 +3267,18 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);Thread.sleep(5000);
 
 		// Navigate to Manage Team
+		CommonFunctions.fn_WaitForAnElementToBeClickable(compAdminDashboardPageObject.manageTeamLink);
 		Thread.sleep(2000);
 		CommonFunctions.fn_NavigateToPage(compAdminDashboardPageObject.manageTeamLink, "Manage Team",
 				"User Management");
@@ -3410,13 +3432,15 @@ public class CreateCompany extends BaseClass {
 		CommonFunctions.fn_WaitTillPageLoads("Widgets");
 
 		// Select the company admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);Thread.sleep(5000);
 
 		// Enter the values in fields
 		// Enter values
@@ -3513,12 +3537,14 @@ public class CreateCompany extends BaseClass {
 
 		// Select the region admin in dashboard selection dropdown
 		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Region"));
-		Thread.sleep(2000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);Thread.sleep(5000);
 
 		// Reset it to default values
 		javaScriptWidgetPageObject.resetConfigButton.click();
@@ -3580,13 +3606,15 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the Office admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(5000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Office"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);Thread.sleep(5000);
 
 		// Reset it to default values
 		javaScriptWidgetPageObject.resetConfigButton.click();
@@ -3648,13 +3676,15 @@ public class CreateCompany extends BaseClass {
 				"Allow modest rating value is not correct.");
 
 		// Select the comp admin in dashboard selection dropdown
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		CommonFunctions.fn_MouseHover(editProfilePageObject.dashboardSelectionDropDown);
+		Thread.sleep(2000);
 		editProfilePageObject.dashboardSelectionDropDown.click();
 		Thread.sleep(4000);
 		// CommonFunctions.fn_WaitForAnElementToBeVisible(editProfilePageObject.dashboardSelectionDropDownBox);
-		CommonFunctions.fn_ClickOnItemInDropDown(editProfilePageObject.dashboardSelectionDropDownItems,
+		CommonFunctions.fn_ClickOnItemInDropDownUsingActions(editProfilePageObject.dashboardSelectionDropDownItems,
 				ExcelUtil.getCellValueByColumnName("Java Script Pages Verification", "Company"));
-		Thread.sleep(3000);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(editProfilePageObject.dashboardSelectionDropDown);Thread.sleep(5000);
 
 		// Navigate to Manage Team
 		Thread.sleep(2000);
@@ -4677,8 +4707,8 @@ public class CreateCompany extends BaseClass {
 		Thread.sleep(5000);
 		quickEditPageObject.saveButton.click();
 		Thread.sleep(2000);
-		String profileImage = quickEditPageObject.profileImage.getAttribute("src");
-		String logoImage = quickEditPageObject.profileImage.getAttribute("src");
+		//String profileImage = quickEditPageObject.profileImage.getAttribute("src");
+		//String logoImage = quickEditPageObject.profileImage.getAttribute("src");
 
 		// Login to the agent
 		compAdminDashboardPageObject.dashBoardLink.click();
@@ -5088,8 +5118,143 @@ public class CreateCompany extends BaseClass {
 		}
 	}
 
+	@Given("^Login to existing company for verifying new dashboard$")
+    public void login_to_existing_company_for_verifying_new_dashboard() throws Throwable {
+		// Login to the SS Admin
+		CommonFunctions.fn_OpenURL(prop.getProperty("URL"));
+		CommonFunctions.fn_LoginAsSSorCompAdmin(loginPageObject, ExcelUtil.getCellData("Login Details", 1, 1),
+				ExcelUtil.getCellData("Login Details", 1, 2));
+		CommonFunctions.fn_WaitTillPageLoads("Hierarchy");
+
+		// Search the existing company
+		companyName = ExcelUtil.getCellData("Login Details", 11, 3);
+		CommonFunctions.fn_WaitForAnElementToBeClickable(ssAdminHierarchyPageObject.companySearchBox);
+		System.out.println(companyName);
+		ssAdminHierarchyPageObject.companySearchBox.sendKeys(companyName);
+		ssAdminHierarchyPageObject.companySearchIcon.click();
+		Thread.sleep(4000);
+
+		// Click on login as if the company searched is found
+		if (ssAdminHierarchyPageObject.companyName.getText().toLowerCase().contains(companyName.toLowerCase())) {
+			ssAdminHierarchyPageObject.companyAdminLoginAs.click();
+			Thread.sleep(4000);
+			CommonFunctions.fn_WaitTillPageLoads("Dashboard");
+		} else {
+			System.out.println("Company is not searched and displayed  in first row.");
+		}
+
+    }
+
+    @When("^Navigated to dashboard$")
+    public void navigated_to_dashboard() throws Throwable {
+        
+    	Thread.sleep(3000);
+    	// Get the values on UI
+    	int processedCount = Integer.parseInt(compAdminDashboardPageObject.processedCount.getText());
+    	int incompleteSurveyCount = Integer.parseInt((compAdminDashboardPageObject.incompleteSurveyCount.getText().split(" "))[0]);
+    	int completedCount = Integer.parseInt((compAdminDashboardPageObject.completedCount.getText().split(" "))[0]);
+    	int socialPostsCount = Integer.parseInt(compAdminDashboardPageObject.socialPostsCount.getText());
+    	int zillowReviewsCount = Integer.parseInt(compAdminDashboardPageObject.zillowReviewsCount.getText());
+    	int thirdPartyCount = Integer.parseInt(compAdminDashboardPageObject.thirdPartyCount.getText());
+    	int googleReviewsCount = Integer.parseInt(compAdminDashboardPageObject.googleReviewsCount.getText());
+    	System.out.println(googleReviewsCount);
+    	int facebookReviewsCount = Integer.parseInt(compAdminDashboardPageObject.facebookReviewsCount.getText());
+    	System.out.println(facebookReviewsCount);
+    	
+    	int unprocessedCount= Integer.parseInt(compAdminDashboardPageObject.unprocessedCount.getText());
+    	int unassignedCount= Integer.parseInt(compAdminDashboardPageObject.unassignedCount.getText());
+    	int duplicateCount= Integer.parseInt(compAdminDashboardPageObject.duplicateCount.getText());
+    	int corruptedCount= Integer.parseInt(compAdminDashboardPageObject.corruptedCount.getText());
+    	System.out.println(corruptedCount);
+    	int otherCount= Integer.parseInt(compAdminDashboardPageObject.otherCount.getText());
+    	int unsubscribedCount= Integer.parseInt(compAdminDashboardPageObject.unsubscribedCount.getText());
+    	
+    	// Connect to DB
+    	Class.forName("com.mysql.cj.jdbc.Driver");
+		connection = DriverManager.getConnection("jdbc:mysql://ss-report-demo.c3n1qsdsmjxc.us-west-2.rds.amazonaws.com","ss_app", "W{[2349,C~42k]e");
+		statement = connection.createStatement();
+		
+		// Get values from DB
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Completed Count");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int completedCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Incomplete");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int inCompletedCountInDB = resultSet.getInt(1);
+		
+		int processedCountInDB = completedCountInDB+inCompletedCountInDB;
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Zillow Reviews");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int zillowReviewsCountInDB = resultSet.getInt(1);
+		
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Third Party Reviews");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int thirdPartyReviewsCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Google Reviews");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int googleReviewsCountInDB = resultSet.getInt(1);
+		
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Facebook Reviews");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int facebookReviewsCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Unassigned");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int unassignedCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Duplicate");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int duplicateCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Corrupted");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int corruptedCountInDB = resultSet.getInt(1);
+		
+		// Verify values
+    	softAssert.assertEquals(completedCount, completedCountInDB, "Completed count is incorrect");
+    	softAssert.assertEquals(incompleteSurveyCount, inCompletedCountInDB, "Incomplete count is incorrect");
+    	softAssert.assertEquals(processedCount, processedCountInDB, "Processed count is incorrect");
+    	softAssert.assertEquals(zillowReviewsCount, zillowReviewsCountInDB, "Zillow count is incorrect");
+    	softAssert.assertEquals(thirdPartyCount, thirdPartyReviewsCountInDB, "Third Party count is incorrect");
+    	softAssert.assertEquals(googleReviewsCount, googleReviewsCountInDB, "Google count is incorrect");
+    	softAssert.assertEquals(facebookReviewsCount, facebookReviewsCountInDB, "Facebook count is incorrect");
+    	//softAssert.assertEquals(socialPostsCount, socialPostsCountInDB, "Social posts count is incorrect");
+    	
+    	//softAssert.assertEquals(unprocessedCount, unprocessedCountInDB, "Unprocessed count is incorrect");
+    	softAssert.assertEquals(unassignedCount, unassignedCountInDB, "Unassigned count is incorrect");
+    	softAssert.assertEquals(duplicateCount, duplicateCountInDB, "Duplicate count is incorrect");
+    	softAssert.assertEquals(corruptedCount, corruptedCountInDB, "Corrupted count is incorrect");
+    	//softAssert.assertEquals(otherCount, otherCountInDB, "Other count is incorrect");
+    	//softAssert.assertEquals(unsubscribedCount, unsubscribedCountInDB, "Unsubscribed count is incorrect");
+    		
+    }
+
+    @Then("^Values on UI should match with that of DB$")
+    public void values_on_ui_should_match_with_that_of_db() throws Throwable {
+        
+    	CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
+    	softAssert.assertAll();
+    	
+    	
+    }
+	
 	@And("^Test$")
 	public void test() throws Exception {
 
+		
 	}
 }

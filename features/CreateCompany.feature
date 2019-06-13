@@ -85,3 +85,13 @@ Scenario: Verify for the quick edits
 Given Login to existing company for verifying quick edits
 When Created a new agent and update the logo
 Then Details should be updated in agent login
+
+@RegressionTest12
+Scenario: Verify for the new dashboard
+Given Login to existing company for verifying new dashboard
+When Navigated to dashboard
+Then Values on UI should match with that of DB
+
+@Test
+Scenario: Test
+And Test

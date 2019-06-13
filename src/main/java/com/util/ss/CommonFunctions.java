@@ -27,7 +27,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.asserts.SoftAssert;
 
@@ -240,6 +239,20 @@ public class CommonFunctions extends BaseClass {
 		for (int i = 0; i < sizeOfListItems; i++) {
 			if (dropDownListItems.get(i).getText().equalsIgnoreCase(listItemToSelect)||dropDownListItems.get(i).getText().contains(listItemToSelect)) {
 				dropDownListItems.get(i).click();
+				break;
+			}
+		}
+	} 
+	
+	public static void fn_ClickOnItemInDropDownUsingActions(List<WebElement> dropDownListItems, String listItemToSelect) throws InterruptedException {
+		int sizeOfListItems = dropDownListItems.size();
+		System.out.println("Entered this method");
+		for (int i = 0; i < sizeOfListItems; i++) {
+			if (dropDownListItems.get(i).getText().equalsIgnoreCase(listItemToSelect)||dropDownListItems.get(i).getText().contains(listItemToSelect)) {
+				fn_MouseHover(dropDownListItems.get(i));
+				Thread.sleep(2000);
+				dropDownListItems.get(i).click();
+				Thread.sleep(2000);
 				break;
 			}
 		}

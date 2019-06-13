@@ -194,4 +194,10 @@ public class CompAdminDashboardPage extends BaseClass{
 	@FindBy(xpath = "//span[@id='third-party-lbl-span']")
 	public WebElement thirdPartyCount;
 	
+	@FindBy(xpath = "//span[@id='google-lbl-span']")
+	public WebElement googleReviewsCount;
+	
+	@FindBy(xpath = "//span[@id='facebook-lbl-span']")
+	public WebElement facebookReviewsCount;
+	
 }

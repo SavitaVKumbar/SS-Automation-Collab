@@ -7,71 +7,54 @@ formatter.feature({
   "keyword": "Feature"
 });
 formatter.scenario({
-  "line": 36,
-  "name": "Verify that review is moved to different tabs after performing the actions in social monitor",
+  "line": 90,
+  "name": "Verify for the new dashboard",
   "description": "",
-  "id": "create-a-company-through-the-invitation-email;verify-that-review-is-moved-to-different-tabs-after-performing-the-actions-in-social-monitor",
+  "id": "create-a-company-through-the-invitation-email;verify-for-the-new-dashboard",
   "type": "scenario",
   "keyword": "Scenario",
   "tags": [
     {
-      "line": 35,
-      "name": "@RegressionTest4"
+      "line": 89,
+      "name": "@RegressionTest12"
     }
   ]
 });
 formatter.step({
-  "line": 37,
-  "name": "Login to existing company admin",
+  "line": 91,
+  "name": "Login to existing company for verifying new dashboard",
   "keyword": "Given "
 });
 formatter.step({
-  "line": 38,
-  "name": "SS Admin performs actions on the reviews in Social Monitor",
+  "line": 92,
+  "name": "Navigated to dashboard",
   "keyword": "When "
 });
 formatter.step({
-  "line": 39,
-  "name": "Review is moved to resolutions",
+  "line": 93,
+  "name": "Values on UI should match with that of DB",
   "keyword": "Then "
 });
-formatter.step({
-  "comments": [
-    {
-      "line": 40,
-      "value": "#And Emails should be received and user should be able to reply"
-    }
-  ],
-  "line": 41,
-  "name": "Company admin should be able to see the reviews in social monitor",
-  "keyword": "And "
-});
 formatter.match({
-  "location": "CreateCompany.login_to_existing_company_admin()"
+  "location": "CreateCompany.login_to_existing_company_for_verifying_new_dashboard()"
 });
 formatter.result({
-  "duration": 31492896770,
+  "duration": 30763954520,
   "status": "passed"
 });
 formatter.match({
-  "location": "CreateCompany.ss_admin_performs_actions_on_the_reviews_in_social_monitor()"
+  "location": "CreateCompany.navigated_to_dashboard()"
 });
 formatter.result({
-  "duration": 64328200758,
+  "duration": 11359814427,
   "status": "passed"
 });
 formatter.match({
-  "location": "CreateCompany.review_is_moved_to_resolutions()"
+  "location": "CreateCompany.values_on_ui_should_match_with_that_of_db()"
 });
 formatter.result({
-  "duration": 27443596105,
-  "status": "passed"
-});
-formatter.match({
-  "location": "CreateCompany.company_admin_should_be_able_to_see_the_reviews_in_social_monitor()"
-});
-formatter.result({
-  "duration": 37002,
-  "status": "passed"
+  "duration": 1550974289,
+  "error_message": "java.lang.AssertionError: The following asserts failed:\n\tCompleted count is incorrect expected [64] but found [69],\n\tIncomplete count is incorrect expected [80] but found [78],\n\tProcessed count is incorrect expected [144] but found [147],\n\tZillow count is incorrect expected [48] but found [47],\n\tThird Party count is incorrect expected [1510] but found [1509],\n\tCorrupted count is incorrect expected [0] but found [3]\r\n\tat org.testng.asserts.SoftAssert.assertAll(SoftAssert.java:43)\r\n\tat com.stepdefinitions.ss.CreateCompany.values_on_ui_should_match_with_that_of_db(CreateCompany.java:5250)\r\n\tat ✽.Then Values on UI should match with that of DB(features/CreateCompany.feature:93)\r\n",
+  "status": "failed"
 });
 });

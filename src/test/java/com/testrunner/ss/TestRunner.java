@@ -27,8 +27,7 @@ import cucumber.api.CucumberOptions;
 
 @SuppressWarnings("unused")
 @CucumberOptions(features = { "features/CreateCompany.feature" }, glue = { "com.stepdefinitions.ss" }, tags = {
-		"@RegressionTest1" }, plugin = { "pretty", "html:target/cucumber-reports" }, monochrome = true)
-
+		"@RegressionTest12" }, plugin = { "pretty", "html:target/cucumber-reports" }, monochrome = true)
 public class TestRunner extends AbstractTestNGCucumberTests {
 
 	WebDriver driver;
