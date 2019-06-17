@@ -5192,7 +5192,6 @@ public class CreateCompany extends BaseClass {
 		resultSet.next();
 		int zillowReviewsCountInDB = resultSet.getInt(1);
 		
-		
 		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Third Party Reviews");
 		resultSet = statement.executeQuery(query);
 		resultSet.next();
@@ -5224,6 +5223,21 @@ public class CreateCompany extends BaseClass {
 		resultSet.next();
 		int corruptedCountInDB = resultSet.getInt(1);
 		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Great");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int greatCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "OK");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int okCountInDB = resultSet.getInt(1);
+		
+		query = ExcelUtil.getCellValueByColumnName("New Dashboard", "Unpleasant");
+		resultSet = statement.executeQuery(query);
+		resultSet.next();
+		int unpleasantCountInDB = resultSet.getInt(1);
+		
 		// Verify values
     	softAssert.assertEquals(completedCount, completedCountInDB, "Completed count is incorrect");
     	softAssert.assertEquals(incompleteSurveyCount, inCompletedCountInDB, "Incomplete count is incorrect");
@@ -5241,6 +5255,14 @@ public class CreateCompany extends BaseClass {
     	//softAssert.assertEquals(otherCount, otherCountInDB, "Other count is incorrect");
     	//softAssert.assertEquals(unsubscribedCount, unsubscribedCountInDB, "Unsubscribed count is incorrect");
     		
+    	// Calcuate SPS with formula SPS=[(Great-Unpleasant)/(Great+Unpleasant+Ok)]*100
+    	int SPSinDB = ((greatCountInDB-unpleasantCountInDB)/(greatCountInDB+unpleasantCountInDB+okCountInDB))*100;
+    	compAdminDashboardPageObject.promoterStatsTab.click();
+    	Thread.sleep(3000);
+    	String socialPromoterScore = compAdminDashboardPageObject.socialPromoterScore.getText();
+    	int SPS = Integer.parseInt(socialPromoterScore.substring(13));
+    	softAssert.assertEquals(SPS, SPSinDB, "SPS is incorrect");
+    	
     }
 
     @Then("^Values on UI should match with that of DB$")
@@ -5248,8 +5270,7 @@ public class CreateCompany extends BaseClass {
         
     	CommonFunctions.fn_LogOutAsCompAdmin(compAdminDashboardPageObject);
     	softAssert.assertAll();
-    	
-    	
+    	  	
     }
 	
 	@And("^Test$")

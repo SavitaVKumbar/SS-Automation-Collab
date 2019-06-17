@@ -197,7 +197,13 @@ public class CompAdminDashboardPage extends BaseClass{
 	@FindBy(xpath = "//span[@id='google-lbl-span']")
 	public WebElement googleReviewsCount;
 	
+	@FindBy(xpath = "//a[text()='Promoter Stats']")
+	public WebElement promoterStatsTab;
+	
 	@FindBy(xpath = "//span[@id='facebook-lbl-span']")
 	public WebElement facebookReviewsCount;
+	
+	@FindBy(xpath = "//span[@class='incomplete-trans-span']")
+	public WebElement socialPromoterScore;
 	
 }
